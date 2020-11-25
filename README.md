@@ -18,6 +18,12 @@ Przetwarzanie danych będzie realizowane w modelu z podwójnym przepływem gdzie
 
 Przepływ realizowanej pracy i zadań zostanie wizualizowany w **Azure DevOps**.
 
+## Funkcjonalność
+
+Planowaną funkcjonalność aplikacji widzianą od strony użytkownika prezentuje poniższy diagram przypadków użycia.
+
+![diagram przypadków użycia aplikacji](./documentation/resources/Use_case_diagram.png)
+
 ## Stos technologiczny
 
 Wszystkie usługi chmurowe zostaną realizowane za pomocą użycia platformy Azure. W usłudze Azure Web App po stronie Front-End zostanie użyty React.js wraz z Materials UI zaś od strony Back-End zostanie użyty Python 3 w oparciu o framework Flask.
