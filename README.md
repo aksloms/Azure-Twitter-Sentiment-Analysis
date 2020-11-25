@@ -1,5 +1,13 @@
 # Azure-Twitter-Sentiment-Analysis
 
+Spis treści dokumentu
+
+- [Azure-Twitter-Sentiment-Analysis](#azure-twitter-sentiment-analysis)
+  - [Cel projektu](#cel-projektu)
+  - [Realizacja projektu](#realizacja-projektu)
+  - [Funkcjonalność](#funkcjonalność)
+  - [Stos technologiczny](#stos-technologiczny)
+
 ## Cel projektu
 
 Wykrywanie sentymentu wobec wspomnianych hashtagów we wspomnianych w tweetach w języku polskim. Przypisywanie pozytywnego/neutralnego/negatywnego sentymentu do wypowiedzi dotyczących hashtagów w treści tweeta.
@@ -17,6 +25,12 @@ Aplikacja będzie udostępniona dla użytkowników za pomocą **Azure Web App**,
 Przetwarzanie danych będzie realizowane w modelu z podwójnym przepływem gdzie w jednej ścieżce analiza zostanie wykonana za pomocą **Cognitive Services**, zaś w drugim modelu zostanie użyty **Azure DataBricks** lub **Machine Learning** gdzie będziemy mogli popisać się własną implementacją. Wyniku obu ścieżek będą porównywane(dokładność, skuteczność, możliwości).
 
 Przepływ realizowanej pracy i zadań zostanie wizualizowany w **Azure DevOps**.
+
+## Funkcjonalność
+
+Planowaną funkcjonalność aplikacji widzianą od strony użytkownika prezentuje poniższy diagram przypadków użycia.
+
+![diagram przypadków użycia aplikacji](./documentation/resources/Use_case_diagram.png)
 
 ## Stos technologiczny
 
