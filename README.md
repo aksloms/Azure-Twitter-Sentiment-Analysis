@@ -1,5 +1,13 @@
 # Azure-Twitter-Sentiment-Analysis
 
+Spis treści dokumentu
+
+- [Azure-Twitter-Sentiment-Analysis](#azure-twitter-sentiment-analysis)
+  - [Cel projektu](#cel-projektu)
+  - [Realizacja projektu](#realizacja-projektu)
+  - [Funkcjonalność](#funkcjonalność)
+  - [Stos technologiczny](#stos-technologiczny)
+
 ## Cel projektu
 
 Wykrywanie sentymentu wobec wspomnianych hashtagów we wspomnianych w tweetach w języku polskim. Przypisywanie pozytywnego/neutralnego/negatywnego sentymentu do wypowiedzi dotyczących hashtagów w treści tweeta.
