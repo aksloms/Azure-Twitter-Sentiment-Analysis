@@ -1,5 +1,7 @@
 # Azure-Twitter-Sentiment-Analysis
 
+[![Board Status](https://dev.azure.com/01131252/97656113-fe0b-4df5-bada-ec23aa22f3a0/038079e0-e851-411b-869b-7e8f5d77514c/_apis/work/boardbadge/a2b71afe-c270-4745-ac43-fa36f0a2af5c?columnOptions=1)](https://dev.azure.com/01131252/97656113-fe0b-4df5-bada-ec23aa22f3a0/_boards/board/t/038079e0-e851-411b-869b-7e8f5d77514c/Microsoft.RequirementCategory/)
+
 Spis treści dokumentu
 
 - [Azure-Twitter-Sentiment-Analysis](#azure-twitter-sentiment-analysis)
