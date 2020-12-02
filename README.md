@@ -18,7 +18,7 @@ Wykrywanie sentymentu wobec hashtagów w tweetach w języku polskim. Przypisywan
 
 Projekt zostanie oparty o usługi i aplikacje udostępnione poprzez platformę Azure. Poniższy diagram przedstawia sposób użycia usług wybranych do projektu.
 
-![architecture diagram](./documentation/resources/Inital_architecture_diagram.png)
+![architecture diagram](./documentation/resources/architecture_diagram.png)
 
 Projekt za pomocą triggera ustawionego w **Functions** uruchamia pobranie danych przez API Twittera, które przechowywane będą w **Table Storage**. Do przechowywania danych wrażliwych, takich jak token do API, zostanie użyty **Key Vault**. Pobrane dane będą poddane filtracji pozwalającej na konwersję tweetów o charakterze spamu na jeden element reprezentatywny oraz wybranie jedynie tych danych, które mogą uznać za wartościowe w kolejnych etapach analizy.
 
