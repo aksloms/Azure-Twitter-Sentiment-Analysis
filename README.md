@@ -19,12 +19,12 @@ Wykrywanie sentymentu wobec hashtagów w tweetach w języku polskim. Przypisywan
 
 ## Skład zespołu
 
-- Szymon Męcina 299282 (Lider)
+- Szymon Męcina 299270 (Lider)
 - Asia Smolska
 - Damian Smugorzewski 299263
 - Krzysiek Dąbrowski 293101
 - Radek Cieślik 299237
-- Szymon Wydziałkiewicz 299270
+- Szymon Wydziałkiewicz 299282
 
 ## Realizacja projektu
 
