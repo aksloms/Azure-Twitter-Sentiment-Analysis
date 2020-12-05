@@ -62,4 +62,5 @@ resource "azurerm_function_app" "functionApp" {
   app_service_plan_id        = azurerm_app_service_plan.asp.id
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+  version                    = "~3"
 }
