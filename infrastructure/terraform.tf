@@ -64,6 +64,12 @@ resource "azurerm_function_app" "functionApp" {
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   version                    = "~3"
 
+  connection_string {
+    name = "trainingafstorage_STORAGE"
+    type = "Custom"
+    value = azurerm_storage_account.storage.primary_connection_string
+  }
+
   site_config {
     http2_enabled = true
   }
