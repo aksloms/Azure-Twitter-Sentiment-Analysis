@@ -19,29 +19,24 @@ variable "location" {
 
 variable "rgName" {
   type = string
-  default = "training-azure-fuctions-tweeter-rg"
   description = "Name of resource group"
 }
 
 variable "storageName" {
   type = string
   default = "trainingafstorage"
-  description = "Name of storage account"
 }
 
 # Function App
 
 variable "servicePlanName" {
   type = string
-  default = "functionServicePlan"
 }
 
 variable "appInsightsName" {
   type = string
-  default = "applicationInsights"
 }
 
 variable "functionAppName" {
   type = string
-  default = "twitterTrainingFunctionPW"
 }
