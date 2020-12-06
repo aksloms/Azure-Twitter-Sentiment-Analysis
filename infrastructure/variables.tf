@@ -36,6 +36,11 @@ variable "servicePlanName" {
   default = "functionServicePlan"
 }
 
+variable "appInsightsName" {
+  type = string
+  default = "applicationInsights"
+}
+
 variable "functionAppName" {
   type = string
   default = "twitterTrainingFunctionPW"

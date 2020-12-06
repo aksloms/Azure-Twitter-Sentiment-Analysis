@@ -43,6 +43,8 @@ resource "azurerm_storage_account" "storage" {
   tags = var.tags
 }
 
+### Function app ###
+
 resource "azurerm_app_service_plan" "asp" {
   name                = var.servicePlanName
   location            = azurerm_resource_group.rg.location
@@ -55,6 +57,13 @@ resource "azurerm_app_service_plan" "asp" {
   }
 }
 
+resource "azurerm_application_insights" "ai" {
+  name                = var.appInsightsName
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+}
+
 resource "azurerm_function_app" "functionApp" {
   name                       = var.functionAppName
   location                   = azurerm_resource_group.rg.location
@@ -63,6 +72,10 @@ resource "azurerm_function_app" "functionApp" {
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   version                    = "~3"
+
+  app_settings = {
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.ai.instrumentation_key
+  }
 
   connection_string {
     name = "trainingafstorage_STORAGE"
