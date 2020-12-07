@@ -20,7 +20,7 @@ Wykrywanie sentymentu wobec hashtagów w tweetach w języku polskim. Przypisywan
 ## Skład zespołu
 
 - Szymon Męcina 299270 (Lider)
-- Asia Smolska
+- Asia Smolska 291100
 - Damian Smugorzewski 299263
 - Krzysiek Dąbrowski 293101
 - Radek Cieślik 299237
