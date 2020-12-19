@@ -1,6 +1,6 @@
 rgName = "training-azure-fuctions-tweeter-rg"
 
-mainStorageAccountName = "mainSA"
+mainStorageAccountName = "mainsa"
 
 fetchTweetsServicePlanName = "fetchTweetsASP"
 FetchTweetsAppInsightsName = "fetchTweetsAI"
