@@ -78,7 +78,7 @@ resource "azurerm_function_app" "fetchTweetsFA" {
   }
 
   connection_string {
-    name = "trainingafstorage_STORAGE"
+    name = "mainStorage"
     type = "Custom"
     value = azurerm_storage_account.storage.primary_connection_string
   }
