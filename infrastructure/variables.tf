@@ -42,3 +42,8 @@ variable "FetchTweetsAppInsightsName" {
 variable "FetchTweetsFunctionAppName" {
   type = string
 }
+
+variable "TweeterAPIBearerToken" {
+  type = string
+  description = "Bearer token used to featch data from Twitter API v2"
+}
