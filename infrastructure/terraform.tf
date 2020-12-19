@@ -45,7 +45,7 @@ resource "azurerm_storage_account" "storage" {
 
 ### Function app ###
 
-resource "azurerm_app_service_plan" "asp" {
+resource "azurerm_app_service_plan" "fetchTweetsASP" {
   name                = var.fetchTweetsServicePlanName
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -57,24 +57,24 @@ resource "azurerm_app_service_plan" "asp" {
   }
 }
 
-resource "azurerm_application_insights" "ai" {
+resource "azurerm_application_insights" "fetchTweetsAI" {
   name                = var.FetchTweetsAppInsightsName
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
 }
 
-resource "azurerm_function_app" "functionApp" {
+resource "azurerm_function_app" "fetchTweetsFA" {
   name                       = var.FetchTweetsFunctionAppName
   location                   = azurerm_resource_group.rg.location
   resource_group_name        = azurerm_resource_group.rg.name
-  app_service_plan_id        = azurerm_app_service_plan.asp.id
+  app_service_plan_id        = azurerm_app_service_plan.fetchTweetsASP.id
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   version                    = "~3"
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.ai.instrumentation_key
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.fetchTweetsAI.instrumentation_key
   }
 
   connection_string {
