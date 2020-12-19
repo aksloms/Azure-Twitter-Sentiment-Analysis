@@ -33,7 +33,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_storage_account" "storage" {
-  name                     = var.storageName
+  name                     = var.mainStorageAccountName
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -46,7 +46,7 @@ resource "azurerm_storage_account" "storage" {
 ### Function app ###
 
 resource "azurerm_app_service_plan" "asp" {
-  name                = var.servicePlanName
+  name                = var.fetchTweetsServicePlanName
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "FunctionApp"
@@ -58,14 +58,14 @@ resource "azurerm_app_service_plan" "asp" {
 }
 
 resource "azurerm_application_insights" "ai" {
-  name                = var.appInsightsName
+  name                = var.FetchTweetsAppInsightsName
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
 }
 
 resource "azurerm_function_app" "functionApp" {
-  name                       = var.functionAppName
+  name                       = var.FetchTweetsFunctionAppName
   location                   = azurerm_resource_group.rg.location
   resource_group_name        = azurerm_resource_group.rg.name
   app_service_plan_id        = azurerm_app_service_plan.asp.id

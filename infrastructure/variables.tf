@@ -7,7 +7,8 @@ variable "tags" {
     environment = string
   })
   default = {
-    environment = "Terraform Training"
+    environment = "Develop",
+    managedBy = "Terraform"
   }
 }
 
@@ -22,21 +23,21 @@ variable "rgName" {
   description = "Name of resource group"
 }
 
-variable "storageName" {
+variable "mainStorageAccountName" {
   type = string
   default = "trainingafstorage"
 }
 
 # Function App
 
-variable "servicePlanName" {
+variable "fetchTweetsServicePlanName" {
   type = string
 }
 
-variable "appInsightsName" {
+variable "FetchTweetsAppInsightsName" {
   type = string
 }
 
-variable "functionAppName" {
+variable "FetchTweetsFunctionAppName" {
   type = string
 }
