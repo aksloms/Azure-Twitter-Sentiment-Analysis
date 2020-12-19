@@ -7,6 +7,7 @@ variable "tags" {
     environment = string
   })
   default = {
+    organization = "PW",
     environment = "Develop",
     managedBy = "Terraform"
   }

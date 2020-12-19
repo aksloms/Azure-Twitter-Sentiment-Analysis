@@ -1,4 +1,4 @@
-rgName = "training-azure-fuctions-tweeter-rg"
+rgName = "twitter-sentiment-analysis"
 
 mainStorageAccountName = "mainsa"
 
