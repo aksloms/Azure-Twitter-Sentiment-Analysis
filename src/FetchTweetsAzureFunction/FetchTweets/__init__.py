@@ -22,7 +22,7 @@ def filter_tweets():
     # TODO: Discard unusable tweets. Maybe filter by language
     pass
 
-def main(mytimer: func.TimerRequest) -> None:
+def main(mytimer: func.TimerRequest, fetchedTweetsQue: func.Out[func.QueueMessage]) -> None:
     time = datetime.utcnow().replace(tzinfo=timezone.utc)
     hashtags = get_hashtags()
 
@@ -43,6 +43,10 @@ def main(mytimer: func.TimerRequest) -> None:
         max_tweets=100,
         result_stream_args=credentials
     )
+    tweets = response[:-1] if response else []
+    response_metadata = response[-1] if response else []
+
+    fetchedTweetsQue.set(["Test message 1", "Test message 2"])
 
     for r in response:
         logging.info(r)
