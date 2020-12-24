@@ -77,7 +77,8 @@ resource "azurerm_function_app" "fetchTweetsFA" {
 
   app_settings = {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.fetchTweetsAI.instrumentation_key
-    "TwitterAPIEndpoint" = "https://api.twitter.com/2/tweets/search/recent"
+    "TweeterAPIKey" = var.TweeterAPIKey
+    "TweeterAPISecret" = var.TweeterAPISecret
     "TwitterAPIBearerToken" = var.TweeterAPIBearerToken
   }
 

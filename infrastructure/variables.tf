@@ -43,7 +43,17 @@ variable "FetchTweetsFunctionAppName" {
   type = string
 }
 
+variable "TweeterAPIKey" {
+  type = string
+  description = "API key used to fetch data from Twitter API v2"
+}
+
+variable "TweeterAPISecret" {
+  type = string
+  description = "Secret used to fetch data from Twitter API v2"
+}
+
 variable "TweeterAPIBearerToken" {
   type = string
-  description = "Bearer token used to featch data from Twitter API v2"
+  description = "Bearer token used to fetch data from Twitter API v2"
 }
