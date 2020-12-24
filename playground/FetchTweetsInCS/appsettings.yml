@@ -1,0 +1,4 @@
+twitterApi:
+  ConsumerKey: "<ConsumerKey>"
+  ConsumerSecret: "<ConsumerSecret>"
+  BearerToken: "<BearerToken>"
