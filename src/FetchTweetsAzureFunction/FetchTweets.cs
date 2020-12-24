@@ -10,6 +10,7 @@ using Tweetinvi;
 using FetchTweetsAzureFunction.Extensions;
 using Tweetinvi.Parameters.V2;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace FetchTweetsAzureFunction
 {
@@ -33,19 +34,33 @@ namespace FetchTweetsAzureFunction
             var appCredentials = new ConsumerOnlyCredentials().LoadCredentials(twitterApiConfig);
             var client = new TwitterClient(appCredentials);
 
-            var searchParams = new SearchTweetsV2Parameters("#christmas")
-            {
-                StartTime = DateTime.UtcNow.AddMinutes(-5),
-                PageSize = 10
-            };
+            var startTime = DateTime.UtcNow.AddMinutes(-5);
+            var requests = GetHashtags()
+                .Select(h => {
+                    var searchParams = new SearchTweetsV2Parameters(h)
+                    {
+                        StartTime = DateTime.UtcNow.AddMinutes(-5),
+                    };
+                    return (h, client.SearchV2.SearchTweetsAsync(searchParams));
+                })
+                .ToList();
 
-            var response = await client.SearchV2.SearchTweetsAsync(searchParams);
-            foreach (var t in response.Tweets.Select(t => t.Text))
+            foreach(var (hasthtag, request) in requests)
             {
-                log.LogInformation(t);
+                var result = await request;
+                // TODO: Support for paged response
+                var newstId = result.SearchMetadata.NewestId; //TODO: Store newest id
+                var tweets = result.Tweets.Where(t => t.Lang == "pl");
+                log.LogInformation($"Hashtag: {hasthtag}");
+                log.LogInformation(string.Join("\n", tweets.Select(t => t.Text).Take(3)));
             }
+
 
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }
+
+        //TODO: Read hashtags form configuration of storage
+        public static IEnumerable<string> GetHashtags()
+            => new string[] { "#kwarantanna", "#vege", "#IgaŚwiatek", "#hot16challenge", "#fitness", "#krolowezycia", "#kryzys", "#ikea", "#łódź", "#halloween", "#kawa", "#radom", "#karmieniepiersia", "#pomidorowa", "#COVID19", "#nvidia", "#poniedziałek", "#biedronka" };
     }
 }
