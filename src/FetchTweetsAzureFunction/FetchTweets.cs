@@ -1,21 +1,21 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using FetchTweetsAzureFunction.Shared;
-using Tweetinvi;
-using Tweetinvi.Models;
-using Tweetinvi.Models.V2;
-using FetchTweetsAzureFunction.Extensions;
-using Tweetinvi.Parameters.V2;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.Json;
-
 namespace FetchTweetsAzureFunction
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.Json;
+    using System.Threading.Tasks;
+    using FetchTweetsAzureFunction.Extensions;
+    using FetchTweetsAzureFunction.Shared;
+    using Microsoft.Azure.WebJobs;
+    using Microsoft.Azure.WebJobs.Host;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
+    using Tweetinvi;
+    using Tweetinvi.Models;
+    using Tweetinvi.Models.V2;
+    using Tweetinvi.Parameters.V2;
+
     public static class FetchTweets
     {
         [FunctionName("FetchTweets")]
@@ -45,17 +45,16 @@ namespace FetchTweetsAzureFunction
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }
 
-        //TODO: Read hashtags form configuration of storage
+        // TODO: Read hashtags form configuration of storage
         public static IEnumerable<string> GetHashtags()
             => new string[] { "#kwarantanna", "#vege", "#IgaŚwiatek", "#hot16challenge", "#fitness", "#krolowezycia", "#kryzys", "#ikea", "#łódź", "#halloween", "#kawa", "#radom", "#karmieniepiersia", "#pomidorowa", "#COVID19", "#nvidia", "#poniedziałek", "#biedronka" };
 
         public static async Task<IEnumerable<TweetV2>> GetTweetsForHashtagAsync(
             TwitterClient client,
-            string hashtag
-        )
+            string hashtag)
         {
             // TODO: Support for paged response
-            //TODO: Support for storing las tweet id and using it in query
+            // TODO: Support for storing las tweet id and using it in query
             var startTime = DateTime.UtcNow.AddMinutes(-5);
             var searchParams = new SearchTweetsV2Parameters(hashtag)
             {
@@ -63,7 +62,7 @@ namespace FetchTweetsAzureFunction
             };
 
             var respnose = await client.SearchV2.SearchTweetsAsync(searchParams);
-            //TODO: Store newest id
+            // TODO: Store newest id
             var newestId = respnose.SearchMetadata.NewestId;
 
             var tweets = respnose.Tweets.Where(t => t.Lang == "pl");
@@ -78,7 +77,7 @@ namespace FetchTweetsAzureFunction
             tweet.CreatedAt,
             tweet.Entities.Hashtags,
             tweet.Entities.Urls,
-            tweet.Text
+            tweet.Text,
         }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
         public static TwitterClient CreteTwitterClient(IConfiguration config)
