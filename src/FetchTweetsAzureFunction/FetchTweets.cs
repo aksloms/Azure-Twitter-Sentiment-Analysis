@@ -43,18 +43,11 @@ namespace FetchTweetsAzureFunction
                 .Select(h => (h, GetTweetsForHashtagAsync(client, h)))
                 .ToList();
 
-            foreach (var (hasthtag, tweetsRequest) in requests)
+            foreach (var (hashtag, tweetsRequest) in requests)
             {
-                var tweets = await tweetsRequest;
-                log.LogInformation($"Hashtag: {hasthtag}");
-                log.LogInformation(string.Join("\n", tweets.Select(t => t.Text).Take(3)));
-
-                foreach (var tweet in tweets)
+                foreach (var tweet in await tweetsRequest)
                 {
-                    var id = tweet.Id;
-                    var text = tweet.Text;
-                    var message = JsonSerializer.Serialize(new {hasthtag, text, id});
-                    msg.Add(message);
+                    msg.Add(CreateMessage(hashtag, tweet));
                 }
             }
 
@@ -85,5 +78,16 @@ namespace FetchTweetsAzureFunction
             var tweets = respnose.Tweets.Where(t => t.Lang == "pl");
             return tweets;
         }
+
+        public static string CreateMessage(string hashtag, TweetV2 tweet) => JsonSerializer.Serialize(new
+        {
+            SearchHashtag = hashtag,
+            tweet.Id,
+            tweet.AuthorId,
+            tweet.CreatedAt,
+            tweet.Entities.Hashtags,
+            tweet.Entities.Urls,
+            tweet.Text
+        }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
     }
 }
