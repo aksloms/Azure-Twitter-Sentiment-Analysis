@@ -5,8 +5,9 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FetchTweetsAzureFunction.Shared;
-using Tweetinvi.Models;
 using Tweetinvi;
+using Tweetinvi.Models;
+using Tweetinvi.Models.V2;
 using FetchTweetsAzureFunction.Extensions;
 using Tweetinvi.Parameters.V2;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace FetchTweetsAzureFunction
     {
         [FunctionName("FetchTweets")]
         public static async Task RunAsync(
-            [TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
+            [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,
             [Queue("tweetsque"), StorageAccount("AzureWebJobsStorage")] ICollector<string> msg,
             ILogger log)
         {
@@ -38,23 +39,13 @@ namespace FetchTweetsAzureFunction
             var appCredentials = new ConsumerOnlyCredentials().LoadCredentials(twitterApiConfig);
             var client = new TwitterClient(appCredentials);
 
-            var startTime = DateTime.UtcNow.AddMinutes(-5);
             var requests = GetHashtags()
-                .Select(h => {
-                    var searchParams = new SearchTweetsV2Parameters(h)
-                    {
-                        StartTime = DateTime.UtcNow.AddMinutes(-5),
-                    };
-                    return (h, client.SearchV2.SearchTweetsAsync(searchParams));
-                })
+                .Select(h => (h, GetTweetsForHashtagAsync(client, h)))
                 .ToList();
 
-            foreach(var (hasthtag, request) in requests)
+            foreach (var (hasthtag, tweetsRequest) in requests)
             {
-                var result = await request;
-                // TODO: Support for paged response
-                var newstId = result.SearchMetadata.NewestId; //TODO: Store newest id
-                var tweets = result.Tweets.Where(t => t.Lang == "pl");
+                var tweets = await tweetsRequest;
                 log.LogInformation($"Hashtag: {hasthtag}");
                 log.LogInformation(string.Join("\n", tweets.Select(t => t.Text).Take(3)));
 
@@ -73,5 +64,26 @@ namespace FetchTweetsAzureFunction
         //TODO: Read hashtags form configuration of storage
         public static IEnumerable<string> GetHashtags()
             => new string[] { "#kwarantanna", "#vege", "#IgaŚwiatek", "#hot16challenge", "#fitness", "#krolowezycia", "#kryzys", "#ikea", "#łódź", "#halloween", "#kawa", "#radom", "#karmieniepiersia", "#pomidorowa", "#COVID19", "#nvidia", "#poniedziałek", "#biedronka" };
+
+        public static async Task<IEnumerable<TweetV2>> GetTweetsForHashtagAsync(
+            TwitterClient client,
+            string hashtag
+        )
+        {
+            // TODO: Support for paged response
+            //TODO: Support for storing las tweet id and using it in query
+            var startTime = DateTime.UtcNow.AddMinutes(-5);
+            var searchParams = new SearchTweetsV2Parameters(hashtag)
+            {
+                StartTime = DateTime.UtcNow.AddMinutes(-5),
+            };
+
+            var respnose = await client.SearchV2.SearchTweetsAsync(searchParams);
+            //TODO: Store newest id
+            var newestId = respnose.SearchMetadata.NewestId;
+
+            var tweets = respnose.Tweets.Where(t => t.Lang == "pl");
+            return tweets;
+        }
     }
 }
