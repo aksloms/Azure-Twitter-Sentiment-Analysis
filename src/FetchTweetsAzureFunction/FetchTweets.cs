@@ -28,16 +28,7 @@ namespace FetchTweetsAzureFunction
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
-
-            var twitterApiConfig = new TwitterApiConfig
-            {
-                ConsumerKey = config["TweeterAPIKey"],
-                ConsumerSecret = config["TweeterAPISecret"],
-                BearerToken = config["TwitterAPIBearerToken"]
-            };
-
-            var appCredentials = new ConsumerOnlyCredentials().LoadCredentials(twitterApiConfig);
-            var client = new TwitterClient(appCredentials);
+            var client = CreteTwitterClient(config);
 
             var requests = GetHashtags()
                 .Select(h => (h, GetTweetsForHashtagAsync(client, h)))
@@ -89,5 +80,18 @@ namespace FetchTweetsAzureFunction
             tweet.Entities.Urls,
             tweet.Text
         }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+        public static TwitterClient CreteTwitterClient(IConfiguration config)
+        {
+            var twitterApiConfig = new TwitterApiConfig
+            {
+                ConsumerKey = config["TweeterAPIKey"],
+                ConsumerSecret = config["TweeterAPISecret"],
+                BearerToken = config["TwitterAPIBearerToken"]
+            };
+
+            var appCredentials = new ConsumerOnlyCredentials().LoadCredentials(twitterApiConfig);
+            return new TwitterClient(appCredentials);
+        }
     }
 }
