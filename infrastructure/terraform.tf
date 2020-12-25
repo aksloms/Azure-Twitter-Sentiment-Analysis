@@ -43,7 +43,7 @@ resource "azurerm_storage_account" "storage" {
   tags = var.tags
 }
 
-### Function app ###
+### Fetch tweets function app ###
 
 resource "azurerm_app_service_plan" "fetchTweetsASP" {
   name                = var.fetchTweetsServicePlanName
@@ -91,4 +91,33 @@ resource "azurerm_function_app" "fetchTweetsFA" {
   site_config {
     http2_enabled = true
   }
+}
+
+# Storage account resureces used by Fetch tweets function app
+
+resource "azurerm_storage_queue" "tweetsque" {
+  name                 = "tweetsque"
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
+resource "azurerm_storage_table" "LastTweetForHashtag" {
+  name                 = "LastTweetForHashtag"
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
+
+######################################################################
+# Outputs
+######################################################################
+
+output "fetchTweetsFunctionAppName" {
+  value = azurerm_function_app.fetchTweetsFA.name
+}
+
+output "tweetsQueName" {
+  value = azurerm_storage_queue.tweetsque.name
+}
+
+output "lastTweetForHashtagTableName" {
+  value = azurerm_storage_table.LastTweetForHashtag.name
 }
