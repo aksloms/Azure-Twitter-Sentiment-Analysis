@@ -30,7 +30,7 @@ namespace FetchTweetsAzureFunction
                 .Build();
             var client = CreteTwitterClient(config);
 
-            var requests = GetHashtags()
+            var requests = GetHashtags(config)
                 .Select(h => (h, GetTweetsForHashtagAsync(client, h)))
                 .ToList();
 
@@ -45,9 +45,8 @@ namespace FetchTweetsAzureFunction
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }
 
-        // TODO: Read hashtags form configuration of storage
-        public static IEnumerable<string> GetHashtags()
-            => new string[] { "#kwarantanna", "#vege", "#IgaŚwiatek", "#hot16challenge", "#fitness", "#krolowezycia", "#kryzys", "#ikea", "#łódź", "#halloween", "#kawa", "#radom", "#karmieniepiersia", "#pomidorowa", "#COVID19", "#nvidia", "#poniedziałek", "#biedronka" };
+        public static IEnumerable<string> GetHashtags(IConfiguration config)
+            => JsonSerializer.Deserialize<string[]>(config["Hashtags"]);
 
         public static async Task<IEnumerable<TweetV2>> GetTweetsForHashtagAsync(
             TwitterClient client,
