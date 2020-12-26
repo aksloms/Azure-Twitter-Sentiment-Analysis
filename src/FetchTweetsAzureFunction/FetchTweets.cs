@@ -79,10 +79,14 @@ namespace FetchTweetsAzureFunction
                 tweets.AddRange(result.Content.Tweets);
             }
 
+            var newestId = tweets.Aggregate(
+                (agg, next) => next.CreatedAt > agg.CreatedAt ? next : agg)
+                .Id;
             return new AllTweetsResponse
             {
                 Tweets = tweets.ToArray(),
-                NewestId = tweets.OrderBy(t => t.CreatedAt).Last().Id
+                // NewestId = tweets.OrderBy(t => t.CreatedAt).Last().Id
+                NewestId = newestId,
             };
         }
 
