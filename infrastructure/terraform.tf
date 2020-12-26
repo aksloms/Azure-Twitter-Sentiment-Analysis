@@ -5,14 +5,14 @@
 terraform {
   required_providers {
     azurerm = {
-        # The "hashicorp" namespace is the new home for the HashiCorp-maintained
-        # provider plugins.
-        #
-        # source is not required for the hashicorp/* namespace as a measure of
-        # backward compatibility for commonly-used providers, but recommended for
-        # explicitness.
-        source  = "hashicorp/azurerm"
-        version = "~> 2.39.0"
+      # The "hashicorp" namespace is the new home for the HashiCorp-maintained
+      # provider plugins.
+      #
+      # source is not required for the hashicorp/* namespace as a measure of
+      # backward compatibility for commonly-used providers, but recommended for
+      # explicitness.
+      source  = "hashicorp/azurerm"
+      version = "~> 2.39.0"
     }
   }
 }
@@ -42,6 +42,18 @@ resource "azurerm_storage_account" "storage" {
 
   tags = var.tags
 }
+
+### Shared app configuration ###
+
+//TODO: Use ARM template to store hashtags in shared configuration  
+# resource "azurerm_app_configuration" "sharedAppconf" {
+#   name                = "appConf1"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+
+#   sku = "free"
+
+# }
 
 ### Fetch tweets function app ###
 
@@ -80,6 +92,7 @@ resource "azurerm_function_app" "fetchTweetsFA" {
     "TweeterAPIKey" = var.TweeterAPIKey
     "TweeterAPISecret" = var.TweeterAPISecret
     "TwitterAPIBearerToken" = var.TweeterAPIBearerToken
+    "Hashtags" = jsonencode(var.hashtags)
   }
 
   connection_string {

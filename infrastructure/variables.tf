@@ -29,6 +29,17 @@ variable "mainStorageAccountName" {
   default = "trainingafstorage"
 }
 
+# Shared App Congiguration
+
+variable "sharedAppConfigurationName" {
+  type = string
+}
+
+variable "hashtags" {
+  type = list(string)
+  description = "Hashtags that will be processed by application"
+}
+
 # Function App
 
 variable "fetchTweetsServicePlanName" {
