@@ -52,7 +52,6 @@ namespace FetchTweetsAzureFunction
             TwitterClient client,
             string hashtag)
         {
-            // TODO: Support for paged response
             // TODO: Support for storing las tweet id and using it in query
             var startTime = DateTime.UtcNow.AddMinutes(-5);
             var searchParams = new SearchTweetsV2Parameters(hashtag)
@@ -60,12 +59,31 @@ namespace FetchTweetsAzureFunction
                 StartTime = DateTime.UtcNow.AddMinutes(-5),
             };
 
-            var respnose = await client.SearchV2.SearchTweetsAsync(searchParams);
-            // TODO: Store newest id
-            var newestId = respnose.SearchMetadata.NewestId;
+            var response = await GetAllTweets(client, searchParams);
+            var newestId = response.NewestId;
 
-            var tweets = respnose.Tweets.Where(t => t.Lang == "pl");
+            var tweets = response.Tweets.Where(t => t.Lang == "pl");
             return tweets;
+        }
+
+        /// <summary>Read mulit api paged response</summary>
+        public static async Task<AllTweetsResponse> GetAllTweets(
+            TwitterClient client,
+            SearchTweetsV2Parameters parameters)
+        {
+            var tweets = new List<TweetV2>();
+            var iterator = client.SearchV2.GetSearchTweetsV2Iterator(parameters);
+            while (!iterator.Completed)
+            {
+                var result = await iterator.NextPageAsync();
+                tweets.AddRange(result.Content.Tweets);
+            }
+
+            return new AllTweetsResponse
+            {
+                Tweets = tweets.ToArray(),
+                NewestId = tweets.OrderBy(t => t.CreatedAt).Last().Id
+            };
         }
 
         public static string CreateMessage(string hashtag, TweetV2 tweet) => JsonSerializer.Serialize(new
