@@ -51,9 +51,11 @@ variable "TweeterAPIKey" {
 variable "TweeterAPISecret" {
   type = string
   description = "Secret used to fetch data from Twitter API v2"
+  sensitive = true
 }
 
 variable "TweeterAPIBearerToken" {
   type = string
   description = "Bearer token used to fetch data from Twitter API v2"
+  sensitive = true
 }
