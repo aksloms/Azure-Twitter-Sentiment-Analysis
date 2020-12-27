@@ -68,7 +68,7 @@ namespace FetchTweetsAzureFunction
             log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
 
             var startTime = DateTime.UtcNow.AddMinutes(-5);
-            var searchParams = new SearchTweetsV2Parameters($"{hashtag} lang:pl")
+            var searchParams = new SearchTweetsV2Parameters($"{hashtag} lang:pl -is:retweet")
             {
                 SinceId = lastTweet?.NewestId,
                 StartTime = DateTime.UtcNow.AddMinutes(-5), // TODO: Remove this line to fetch all new tweets. This line is here only for testing pourposes
