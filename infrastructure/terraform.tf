@@ -57,6 +57,19 @@ resource "azurerm_storage_account" "storage" {
 
 ### Fetch tweets function app ###
 
+# Storage account resources used by Fetch tweets function app
+
+resource "azurerm_storage_queue" "tweetsque" {
+  name                 = "tweetsque"
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
+resource "azurerm_storage_table" "LastTweetForHashtag" {
+  name                 = "LastTweetForHashtag"
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
+# Main function app resources
 resource "azurerm_app_service_plan" "fetchTweetsASP" {
   name                = var.fetchTweetsServicePlanName
   location            = azurerm_resource_group.rg.location
@@ -93,6 +106,7 @@ resource "azurerm_function_app" "fetchTweetsFA" {
     "TweeterAPISecret" = var.TweeterAPISecret
     "TwitterAPIBearerToken" = var.TweeterAPIBearerToken
     "Hashtags" = jsonencode(var.hashtags)
+    "LastTweetTableName" = azurerm_storage_table.LastTweetForHashtag.name
   }
 
   connection_string {
@@ -106,17 +120,7 @@ resource "azurerm_function_app" "fetchTweetsFA" {
   }
 }
 
-# Storage account resources used by Fetch tweets function app
 
-resource "azurerm_storage_queue" "tweetsque" {
-  name                 = "tweetsque"
-  storage_account_name = azurerm_storage_account.storage.name
-}
-
-resource "azurerm_storage_table" "LastTweetForHashtag" {
-  name                 = "LastTweetForHashtag"
-  storage_account_name = azurerm_storage_account.storage.name
-}
 
 
 ######################################################################
