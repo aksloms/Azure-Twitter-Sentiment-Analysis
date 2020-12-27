@@ -6,7 +6,9 @@ namespace FetchTweetsAzureFunction
     using System.Text.Json;
     using System.Threading.Tasks;
     using FetchTweetsAzureFunction.Extensions;
+    using FetchTweetsAzureFunction.Models;
     using FetchTweetsAzureFunction.Shared;
+    using Microsoft.Azure.Cosmos.Table;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Host;
     using Microsoft.Extensions.Configuration;
@@ -30,8 +32,12 @@ namespace FetchTweetsAzureFunction
                 .Build();
             var client = CreteTwitterClient(config);
 
+            var storageAccount = CloudStorageAccount.Parse(config.GetConnectionString("mainStorage"));
+            var tableClient = storageAccount.CreateCloudTableClient();
+            var lastTweetTable = tableClient.GetTableReference(config["LastTweetTableName"]);
+
             var requests = GetHashtags(config)
-                .Select(h => (h, GetTweetsForHashtagAsync(client, h)))
+                .Select(h => (h, GetTweetsForHashtagAsync(client, lastTweetTable, log, h)))
                 .ToList();
 
             foreach (var (hashtag, tweetsRequest) in requests)
@@ -50,20 +56,29 @@ namespace FetchTweetsAzureFunction
 
         public static async Task<IEnumerable<TweetV2>> GetTweetsForHashtagAsync(
             TwitterClient client,
+            CloudTable lastTweetTable,
+            ILogger log,
             string hashtag)
         {
-            // TODO: Support for storing las tweet id and using it in query
+            var lastTweet = (await lastTweetTable.ExecuteAsync(
+                TableOperation.Retrieve<LastTweetIdEntity>(hashtag, hashtag)
+            )).Result as LastTweetIdEntity;
+
+            log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
+
             var startTime = DateTime.UtcNow.AddMinutes(-5);
             var searchParams = new SearchTweetsV2Parameters(hashtag)
             {
-                StartTime = DateTime.UtcNow.AddMinutes(-5),
+                SinceId = lastTweet?.NewestId,
+                StartTime = DateTime.UtcNow.AddMinutes(-5), // TODO: Remove this line to fetch all new tweets. This line is here only for testing pourposes
             };
 
             var response = await GetAllTweets(client, searchParams);
-            var newestId = response.NewestId;
 
-            var tweets = response.Tweets.Where(t => t.Lang == "pl");
-            return tweets;
+            lastTweet = new LastTweetIdEntity(hashtag) { NewestId = response.NewestId };
+            await lastTweetTable.ExecuteAsync(TableOperation.InsertOrReplace(lastTweet));
+
+            return response.Tweets.Where(t => t.Lang == "pl");
         }
 
         /// <summary>Read mulit api paged response</summary>
@@ -71,13 +86,20 @@ namespace FetchTweetsAzureFunction
             TwitterClient client,
             SearchTweetsV2Parameters parameters)
         {
+            var limit = 100;
+
             var tweets = new List<TweetV2>();
             var iterator = client.SearchV2.GetSearchTweetsV2Iterator(parameters);
-            while (!iterator.Completed)
+            for (var i = 0; i < limit && !iterator.Completed; i++)
             {
                 var result = await iterator.NextPageAsync();
                 tweets.AddRange(result.Content.Tweets);
             }
+            // while (!iterator.Completed)
+            // {
+            //     var result = await iterator.NextPageAsync();
+            //     tweets.AddRange(result.Content.Tweets);
+            // }
 
             var newestId = tweets.Aggregate(
                 (agg, next) => next.CreatedAt > agg.CreatedAt ? next : agg)
