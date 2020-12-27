@@ -20,12 +20,15 @@ namespace FetchTweetsAzureFunction
 
     public static class FetchTweets
     {
+        public static ILogger _log;
+
         [FunctionName("FetchTweets")]
         public static async Task RunAsync(
             [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,
             [Queue("tweetsque"), StorageAccount("AzureWebJobsStorage")] ICollector<string> msg,
             ILogger log)
         {
+            _log = log;
             var config = new ConfigurationBuilder()
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
@@ -37,7 +40,7 @@ namespace FetchTweetsAzureFunction
             var lastTweetTable = tableClient.GetTableReference(config["LastTweetTableName"]);
 
             var requests = GetHashtags(config)
-                .Select(h => (h, GetTweetsForHashtagAsync(client, lastTweetTable, log, h)))
+                .Select(h => (h, GetTweetsForHashtagAsync(client, lastTweetTable, h)))
                 .ToList();
 
             foreach (var (hashtag, tweetsRequest) in requests)
@@ -57,7 +60,6 @@ namespace FetchTweetsAzureFunction
         public static async Task<IEnumerable<TweetV2>> GetTweetsForHashtagAsync(
             TwitterClient client,
             CloudTable lastTweetTable,
-            ILogger log,
             string hashtag)
         {
             var hashtagTableKey = hashtag[1..];
@@ -65,7 +67,7 @@ namespace FetchTweetsAzureFunction
                 TableOperation.Retrieve<LastTweetIdEntity>(hashtagTableKey, hashtagTableKey)
             )).Result as LastTweetIdEntity;
 
-            log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
+            _log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
 
             var searchParams = new SearchTweetsV2Parameters($"{hashtag} lang:pl -is:retweet")
             {
@@ -107,7 +109,6 @@ namespace FetchTweetsAzureFunction
             return new AllTweetsResponse
             {
                 Tweets = tweets.ToArray(),
-                // NewestId = tweets.OrderBy(t => t.CreatedAt).Last().Id
                 NewestId = newestId,
             };
         }
