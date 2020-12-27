@@ -67,7 +67,6 @@ namespace FetchTweetsAzureFunction
 
             log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
 
-            var startTime = DateTime.UtcNow.AddMinutes(-5);
             var searchParams = new SearchTweetsV2Parameters($"{hashtag} lang:pl -is:retweet")
             {
                 SinceId = lastTweet?.NewestId,
