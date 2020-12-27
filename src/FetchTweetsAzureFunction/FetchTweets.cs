@@ -60,14 +60,15 @@ namespace FetchTweetsAzureFunction
             ILogger log,
             string hashtag)
         {
+            var hashtagTableKey = hashtag[1..];
             var lastTweet = (await lastTweetTable.ExecuteAsync(
-                TableOperation.Retrieve<LastTweetIdEntity>(hashtag, hashtag)
+                TableOperation.Retrieve<LastTweetIdEntity>(hashtagTableKey, hashtagTableKey)
             )).Result as LastTweetIdEntity;
 
             log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
 
             var startTime = DateTime.UtcNow.AddMinutes(-5);
-            var searchParams = new SearchTweetsV2Parameters(hashtag)
+            var searchParams = new SearchTweetsV2Parameters($"{hashtag} lang:pl")
             {
                 SinceId = lastTweet?.NewestId,
                 StartTime = DateTime.UtcNow.AddMinutes(-5), // TODO: Remove this line to fetch all new tweets. This line is here only for testing pourposes
@@ -75,10 +76,10 @@ namespace FetchTweetsAzureFunction
 
             var response = await GetAllTweets(client, searchParams);
 
-            lastTweet = new LastTweetIdEntity(hashtag) { NewestId = response.NewestId };
+            lastTweet = new LastTweetIdEntity(hashtagTableKey) { NewestId = response.NewestId };
             await lastTweetTable.ExecuteAsync(TableOperation.InsertOrReplace(lastTweet));
 
-            return response.Tweets.Where(t => t.Lang == "pl");
+            return response.Tweets;
         }
 
         /// <summary>Read mulit api paged response</summary>
