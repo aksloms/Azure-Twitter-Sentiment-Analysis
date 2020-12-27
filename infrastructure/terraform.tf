@@ -106,7 +106,7 @@ resource "azurerm_function_app" "fetchTweetsFA" {
   }
 }
 
-# Storage account resureces used by Fetch tweets function app
+# Storage account resources used by Fetch tweets function app
 
 resource "azurerm_storage_queue" "tweetsque" {
   name                 = "tweetsque"
