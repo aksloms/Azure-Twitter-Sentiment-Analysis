@@ -67,12 +67,12 @@ namespace FetchTweetsAzureFunction
                 TableOperation.Retrieve<LastTweetIdEntity>(hashtagTableKey, hashtagTableKey)
             )).Result as LastTweetIdEntity;
 
-            _log.LogInformation($"{hashtag}: {lastTweet?.NewestId}");
+            _log.LogInformation($"Newest id for hashtag before fetching data {hashtag}: {lastTweet?.NewestId}");
 
             var searchParams = new SearchTweetsV2Parameters($"{hashtag} lang:pl -is:retweet")
             {
                 SinceId = lastTweet?.NewestId,
-                StartTime = DateTime.UtcNow.AddMinutes(-5), // TODO: Remove this line to fetch all new tweets. This line is here only for testing pourposes
+                // StartTime = DateTime.UtcNow.AddMinutes(-5), // TODO: Remove this line to fetch all new tweets. This line is here only for testing pourposes
             };
 
             var response = await GetAllTweets(client, searchParams);
@@ -88,7 +88,7 @@ namespace FetchTweetsAzureFunction
             TwitterClient client,
             SearchTweetsV2Parameters parameters)
         {
-            var limit = 100;
+            const int limit = 3; // Cap the amount of data loaded
 
             var tweets = new List<TweetV2>();
             var iterator = client.SearchV2.GetSearchTweetsV2Iterator(parameters);
@@ -97,11 +97,6 @@ namespace FetchTweetsAzureFunction
                 var result = await iterator.NextPageAsync();
                 tweets.AddRange(result.Content.Tweets);
             }
-            // while (!iterator.Completed)
-            // {
-            //     var result = await iterator.NextPageAsync();
-            //     tweets.AddRange(result.Content.Tweets);
-            // }
 
             var newestId = tweets.Aggregate(
                 (agg, next) => next.CreatedAt > agg.CreatedAt ? next : agg)
