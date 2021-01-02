@@ -75,10 +75,14 @@ namespace FetchTweetsAzureFunction
                 // StartTime = DateTime.UtcNow.AddMinutes(-5), // TODO: Remove this line to fetch all new tweets. This line is here only for testing pourposes
             };
 
-            var response = await GetAllTweets(client, searchParams);
+            const int pageLimit = 3; // Cap the amount of data loaded
+            var response = await GetAllTweets(client, searchParams, pageLimit);
 
-            lastTweet = new LastTweetIdEntity(hashtagTableKey) { NewestId = response.NewestId };
-            await lastTweetTable.ExecuteAsync(TableOperation.InsertOrReplace(lastTweet));
+            if (response.NewestId != null)
+            {
+                lastTweet = new LastTweetIdEntity(hashtagTableKey) { NewestId = response.NewestId };
+                await lastTweetTable.ExecuteAsync(TableOperation.InsertOrReplace(lastTweet));
+            }
 
             return response.Tweets;
         }
@@ -86,21 +90,21 @@ namespace FetchTweetsAzureFunction
         /// <summary>Read mulit api paged response</summary>
         public static async Task<AllTweetsResponse> GetAllTweets(
             TwitterClient client,
-            SearchTweetsV2Parameters parameters)
+            SearchTweetsV2Parameters parameters,
+            int pageLimit = int.MaxValue
+            )
         {
-            const int limit = 3; // Cap the amount of data loaded
-
             var tweets = new List<TweetV2>();
             var iterator = client.SearchV2.GetSearchTweetsV2Iterator(parameters);
-            for (var i = 0; i < limit && !iterator.Completed; i++)
+            for (var i = 0; i < pageLimit && !iterator.Completed; i++)
             {
                 var result = await iterator.NextPageAsync();
                 tweets.AddRange(result.Content.Tweets);
             }
 
-            var newestId = tweets.Aggregate(
-                (agg, next) => next.CreatedAt > agg.CreatedAt ? next : agg)
-                .Id;
+            var newestId = tweets.Count > 0
+                ? tweets.Aggregate((agg, next) => next.CreatedAt > agg.CreatedAt ? next : agg).Id
+                : null;
             return new AllTweetsResponse
             {
                 Tweets = tweets.ToArray(),
