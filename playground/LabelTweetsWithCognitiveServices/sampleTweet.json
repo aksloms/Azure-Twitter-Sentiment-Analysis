@@ -1,0 +1,64 @@
+{
+  "searchHashtag": "#kwarantanna",
+  "id": "1344289927585017857",
+  "authorId": "2277773654",
+  "createdAt": "2020-12-30T15:31:09+01:00",
+  "hashtags": [
+    {
+      "start": 58,
+      "end": 65,
+      "tag": "AD2020"
+    },
+    {
+      "start": 66,
+      "end": 74,
+      "tag": "NowyRok"
+    },
+    {
+      "start": 81,
+      "end": 91,
+      "tag": "Sylwester"
+    },
+    {
+      "start": 92,
+      "end": 100,
+      "tag": "Szampan"
+    },
+    {
+      "start": 101,
+      "end": 107,
+      "tag": "Party"
+    },
+    {
+      "start": 108,
+      "end": 120,
+      "tag": "Kwarantanna"
+    },
+    {
+      "start": 121,
+      "end": 129,
+      "tag": "COVID19"
+    },
+    {
+      "start": 130,
+      "end": 138,
+      "tag": "Pid\u017Cama"
+    },
+    {
+      "start": 139,
+      "end": 147,
+      "tag": "Dom\u00F3wka"
+    }
+  ],
+  "urls": [
+    {
+      "displayUrl": "minddrone.wordpress.com/2020/12/30/sza\u2026",
+      "end": 171,
+      "expandedUrl": "https://minddrone.wordpress.com/2020/12/30/szal-sylwestrowej-mody-czyli-mistrz-i-malgorzata-ad2020-2021/",
+      "start": 148,
+      "url": "https://t.co/F3GCmMpfms",
+      "unwoundUrl": null
+    }
+  ],
+  "text": "Sza\u0142 Sylwestrowej Mody czyli Propozycja Nie Do Odrzucenia #AD2020 #NowyRok #2021 #Sylwester #Szampan #Party #Kwarantanna #COVID19 #Pid\u017Cama\u00A0#Dom\u00F3wka https://t.co/F3GCmMpfms"
+}
