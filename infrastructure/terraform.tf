@@ -44,7 +44,7 @@ resource "azurerm_storage_account" "storage" {
 }
 
 resource "azurerm_storage_account" "dataStorage" {
-  name                     = var.mainStorageAccountName
+  name                     = var.dataStorageAccountName
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
