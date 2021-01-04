@@ -9,6 +9,8 @@ fetchTweetsServicePlanName = "fetchTweetsASP"
 FetchTweetsAppInsightsName = "fetchTweetsAI"
 FetchTweetsFunctionAppName = "fetchTweetsFA-PW"
 
+textAnalyticsName = "processTweetsTA"
+
 processTweetsServicePlanName = "processTweetsASP"
 processTweetsAppInsightsName = "processTweetsAI"
 processTweetsFunctionAppName = "processTweetsFA-PW"

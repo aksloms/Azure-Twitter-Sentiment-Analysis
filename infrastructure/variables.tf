@@ -76,6 +76,10 @@ variable "TweeterAPIBearerToken" {
 
 # Process tweets Function App
 
+variable "textAnalyticsName" {
+  type = string
+}
+
 variable "processTweetsServicePlanName" {
   type = string
 }

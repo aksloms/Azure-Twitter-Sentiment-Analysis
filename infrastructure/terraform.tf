@@ -140,6 +140,15 @@ resource "azurerm_function_app" "fetchTweetsFA" {
 ######### Lable tweets function app #########
 #############################################
 
+resource "azurerm_cognitive_account" "textAnalytics" {
+  name                = var.textAnalyticsName
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  kind                = "TextAnalytics"
+
+  sku_name = "F0"
+}
+
 # Main function app resources
 resource "azurerm_app_service_plan" "processTweetsASP" {
   name                = var.processTweetsServicePlanName
@@ -173,6 +182,9 @@ resource "azurerm_function_app" "processTweetsFA" {
 
   app_settings = {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.processTweetsAI.instrumentation_key
+    "TextAnalyticsApiKey" = azurerm_cognitive_account.textAnalytics.primary_access_key
+    "TextAnalyticsEndpoint" = azurerm_cognitive_account.textAnalytics.endpoint
+    "LabeledTweetsTableName" = azurerm_storage_table.LabeledTweets.name
   }
 
   connection_string {
@@ -202,4 +214,12 @@ output "tweetsQueName" {
 
 output "lastTweetForHashtagTableName" {
   value = azurerm_storage_table.LastTweetForHashtag.name
+}
+
+output "processTweetsFunctionAppName" {
+  value = azurerm_function_app.fetchTweetsFA.name
+}
+
+output "labeledTweetsTableName" {
+  value = azurerm_storage_table.LabeledTweets.name
 }
