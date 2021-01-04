@@ -185,6 +185,7 @@ resource "azurerm_function_app" "processTweetsFA" {
     "TextAnalyticsApiKey" = azurerm_cognitive_account.textAnalytics.primary_access_key
     "TextAnalyticsEndpoint" = azurerm_cognitive_account.textAnalytics.endpoint
     "LabeledTweetsTableName" = azurerm_storage_table.LabeledTweets.name
+    "QueueStorageConnection" = azurerm_storage_account.storage.primary_connection_string
     "DataStorageConnection" = azurerm_storage_account.dataStorage.primary_connection_string
   }
 
