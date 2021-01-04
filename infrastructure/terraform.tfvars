@@ -1,6 +1,7 @@
 rgName = "twitter-sentiment-analysis"
 
 mainStorageAccountName = "mainsa"
+dataStorageAccountName = "pwtwitterdatasa"
 
 sharedAppConfigurationName = "appConfigTwitterPW"
 

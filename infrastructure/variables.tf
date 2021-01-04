@@ -26,7 +26,10 @@ variable "rgName" {
 
 variable "mainStorageAccountName" {
   type = string
-  default = "trainingafstorage"
+}
+
+variable "dataStorageAccountName" {
+  type = string
 }
 
 # Shared App Congiguration
