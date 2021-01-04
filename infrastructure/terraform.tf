@@ -54,6 +54,11 @@ resource "azurerm_storage_account" "dataStorage" {
   tags = var.tags
 }
 
+resource "azurerm_storage_table" "LabeledTweets" {
+  name                 = "LabeledTweets"
+  storage_account_name = azurerm_storage_account.dataStorage.name
+}
+
 ### Shared app configuration ###
 
 //TODO: Use ARM template to store hashtags in shared configuration  
@@ -131,6 +136,55 @@ resource "azurerm_function_app" "fetchTweetsFA" {
   }
 }
 
+#############################################
+######### Lable tweets function app #########
+#############################################
+
+# Main function app resources
+resource "azurerm_app_service_plan" "processTweetsASP" {
+  name                = var.processTweetsServicePlanName
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  kind                = "FunctionApp"
+  reserved            = true
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
+  }
+}
+
+resource "azurerm_application_insights" "processTweetsAI" {
+  name                = var.processTweetsAppInsightsName
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+}
+
+resource "azurerm_function_app" "processTweetsFA" {
+  name                       = var.processTweetsFunctionAppName
+  location                   = azurerm_resource_group.rg.location
+  resource_group_name        = azurerm_resource_group.rg.name
+  app_service_plan_id        = azurerm_app_service_plan.processTweetsASP.id
+  storage_account_name       = azurerm_storage_account.storage.name
+  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+  os_type                    = "linux"
+  version                    = "~3"
+
+  app_settings = {
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.processTweetsAI.instrumentation_key
+  }
+
+  connection_string {
+    name = "dataStorage"
+    type = "Custom"
+    value = azurerm_storage_account.dataStorage.primary_connection_string
+  }
+
+  site_config {
+    http2_enabled = true
+  }
+}
 
 
 

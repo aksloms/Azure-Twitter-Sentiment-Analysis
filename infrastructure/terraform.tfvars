@@ -9,6 +9,10 @@ fetchTweetsServicePlanName = "fetchTweetsASP"
 FetchTweetsAppInsightsName = "fetchTweetsAI"
 FetchTweetsFunctionAppName = "fetchTweetsFA-PW"
 
+processTweetsServicePlanName = "processTweetsASP"
+processTweetsAppInsightsName = "processTweetsAI"
+processTweetsFunctionAppName = "processTweetsFA-PW"
+
 hashtags = [
   "#kwarantanna", 
   "#vege", 

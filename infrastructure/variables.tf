@@ -43,7 +43,7 @@ variable "hashtags" {
   description = "Hashtags that will be processed by application"
 }
 
-# Function App
+# Fetch tweets Function App
 
 variable "fetchTweetsServicePlanName" {
   type = string
@@ -72,4 +72,18 @@ variable "TweeterAPIBearerToken" {
   type = string
   description = "Bearer token used to fetch data from Twitter API v2"
   sensitive = true
+}
+
+# Process tweets Function App
+
+variable "processTweetsServicePlanName" {
+  type = string
+}
+
+variable "processTweetsAppInsightsName" {
+  type = string
+}
+
+variable "processTweetsFunctionAppName" {
+  type = string
 }
