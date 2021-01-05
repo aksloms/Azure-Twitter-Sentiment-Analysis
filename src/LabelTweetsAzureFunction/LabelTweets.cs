@@ -13,14 +13,16 @@ namespace LabelTweetsAzureFunction
     public static class LabelTweets
     {
         [FunctionName("LabelTweets")]
-        public static void Run([QueueTrigger("tweetsque", Connection = "QueueStorageConnection")] string queueMessage, ILogger log)
+        [return: Table("LabeledTweets", Connection = "DataStorageConnection")]
+        public static Tweet Run([QueueTrigger("tweetsque", Connection = "QueueStorageConnection")] string queueMessage, ILogger log)
         {
             var serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var tweet = JsonSerializer.Deserialize<Tweet>(queueMessage);
+            var tweet = JsonSerializer.Deserialize<Tweet>(queueMessage, serializerOptions);
 
             tweet.CleanedText = CleanTweetText(tweet);
 
             log.LogInformation($"C# Queue trigger function processed: {queueMessage}");
+            return tweet;
         }
 
         public static string CleanTweetText(Tweet tweet)

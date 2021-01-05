@@ -6,7 +6,7 @@ namespace LabelTweetsAzureFunction.Models
     public class Tweet : ITableRecord
     {
         public string RowKey => Id;
-        public string PartitionKey => SearchHashtag;
+        public string PartitionKey => SearchHashtag[1..];
         public string SearchHashtag { get; set; }
         public string Id { get; set; }
         public string AuthorId { get; set; }
