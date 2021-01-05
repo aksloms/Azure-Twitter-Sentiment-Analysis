@@ -17,7 +17,7 @@ namespace LabelTweetsAzureFunction.Models
 
         #region labeling data
         public string CleanedText { get; set; }
-        public double CognitiveServicesSentiment { get; set; }
+        public double? CognitiveServicesSentimentScore { get; set; }
         #endregion
     }
 
