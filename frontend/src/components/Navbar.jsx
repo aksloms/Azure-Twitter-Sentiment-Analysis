@@ -2,11 +2,10 @@ import React from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -14,7 +13,10 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 10
     },
     menuButton: {
-        marginRight: theme.spacing(2),
+        '& > *': {
+            margin: theme.spacing(1),
+        },
+        marginLeft: theme.spacing(4)
     },
     title: {
         display: 'none',
@@ -61,24 +63,25 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
     const classes = useStyles();
-
+    console.log(props.isHome)
     return (
         <div className={classes.grow}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
-                        edge="start"
-                        className={classes.menuButton}
-                        color="inherit"
-                        aria-label="open drawer"
-                    >
-                        <MenuIcon />
-                    </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
                         Tag analysis
                     </Typography>
+                    <div className={classes.menuButton}>
+                        {props.isHome && <Button variant="contained" color="primary" href="/plot/sentiment" disableElevation>
+                            Analiza sentymentu
+                        </Button>}
+
+                        {!props.isHome && <Button variant="contained" color="primary" href="/" disableElevation>
+                            Strona główna
+                        </Button>}
+                    </div>
                     <div className={classes.grow} />
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
