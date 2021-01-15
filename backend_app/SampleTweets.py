@@ -1,12 +1,13 @@
 from azure.data.tables import TableClient
 from flask import request
 from flask_restful import Resource
+from config import CONNECTION_STRING, TABLE_NAME
 
 
 class SampleTweets(Resource):
     client = TableClient.from_connection_string(
-        conn_str="",
-        table_name="LabeledTweets")
+        conn_str=CONNECTION_STRING,
+        table_name=TABLE_NAME)
 
     def get(self):
         start_date = request.args.get("start_date")

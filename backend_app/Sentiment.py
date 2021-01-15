@@ -1,20 +1,18 @@
 from azure.data.tables import TableClient
 from flask import request
 from flask_restful import Resource
-from dotenv import load_dotenv
-from os import getenv
 from datetime import datetime, timedelta
+from config import CONNECTION_STRING, TABLE_NAME
 
-
-load_dotenv()
-CONNECTION_STRING = getenv("CONNECTION_STRING")
 
 client = TableClient.from_connection_string(
     conn_str=CONNECTION_STRING,
-    table_name="LabeledTweets")
+    table_name=TABLE_NAME)
 
 
 def get_sentiment(hashtag, start_date, end_date=None):
+    hashtag = hashtag.replace("#", "")
+
     query_filter = f"PartitionKey eq '{hashtag}' and \
         CreatedAt ge datetime'{start_date}'"
 
