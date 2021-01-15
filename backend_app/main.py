@@ -3,7 +3,7 @@ from flask_restful import Api
 
 from AvailableHashtags import AvailableHashtags
 from SampleTweets import SampleTweets
-from AverageSentiment import AverageSentiment
+from Sentiment import AverageSentiment, CurrentSentiment
 
 app = Flask(__name__)
 api = Api(app)
@@ -11,6 +11,7 @@ api = Api(app)
 
 api.add_resource(SampleTweets, '/',)
 api.add_resource(AverageSentiment, "/average-sentiment")
+api.add_resource(CurrentSentiment, "/current-sentiment")
 api.add_resource(AvailableHashtags, "/hashtags")
 
 if __name__ == "__main__":
