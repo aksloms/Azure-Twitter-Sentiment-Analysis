@@ -32,7 +32,7 @@ def get_sentiment(hashtag, start_date, end_date=None):
     if sentiment_sum == 0:
         return {"count": 0}
 
-    return {"average_sentiment": sentiment_sum / count,
+    return {"sentiment": sentiment_sum / count,
             "count": count}
 
 
