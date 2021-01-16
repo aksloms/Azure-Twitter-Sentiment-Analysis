@@ -1,7 +1,37 @@
-rgName = "training-azure-fuctions-tweeter-rg"
+rgName = "twitter-sentiment-analysis"
 
-storageName = "trainingafstorage"
+mainStorageAccountName = "mainsa"
+dataStorageAccountName = "pwtwitterdatasa"
 
-servicePlanName = "functionServicePlan"
-appInsightsName = "applicationInsights"
-functionAppName = "twitterTrainingFunctionPW"
+sharedAppConfigurationName = "appConfigTwitterPW"
+
+fetchTweetsServicePlanName = "fetchTweetsASP"
+FetchTweetsAppInsightsName = "fetchTweetsAI"
+FetchTweetsFunctionAppName = "fetchTweetsFA-PW"
+
+textAnalyticsName = "processTweetsTA"
+
+processTweetsServicePlanName = "processTweetsASP"
+processTweetsAppInsightsName = "processTweetsAI"
+processTweetsFunctionAppName = "processTweetsFA-PW"
+
+hashtags = [
+  "#kwarantanna", 
+  "#vege", 
+  "#IgaŚwiatek", 
+  "#hot16challenge", 
+  "#fitness", 
+  "#krolowezycia", 
+  "#kryzys", 
+  "#ikea",
+  "#łódź",
+  "#halloween",
+  "#kawa",
+  "#radom",
+  "#karmieniepiersia",
+  "#pomidorowa",
+  "#COVID19",
+  "#nvidia",
+  "#poniedziałek",
+  "#biedronka"
+]

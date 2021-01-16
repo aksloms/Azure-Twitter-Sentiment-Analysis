@@ -1,0 +1,6 @@
+twitterApi:
+  ConsumerKey: "<ConsumerKey>"
+  ConsumerSecret: "<ConsumerSecret>"
+  BearerToken: "<BearerToken>"
+ConnectionStrings:
+  TableStorage: "<TableStorage>"
