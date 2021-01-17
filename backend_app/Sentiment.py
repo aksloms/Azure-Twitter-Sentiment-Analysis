@@ -12,7 +12,7 @@ client = TableClient.from_connection_string(
     table_name=TABLE_NAME)
 
 
-def create_query(hashtag, select, start_date, end_date=None):
+def query_tweets(hashtag, select, start_date, end_date=None, max_tweets=100):
     hashtag = hashtag.replace("#", "")
 
     query_filter = f"PartitionKey eq '{hashtag}' and \
@@ -21,23 +21,32 @@ def create_query(hashtag, select, start_date, end_date=None):
     if end_date:
         query_filter += f" and CreatedAt lt datetime'{end_date}'"
 
-    return client.query_entities(
+    query = client.query_entities(
         filter=query_filter,
-        select=select
+        select=select.values()
     )
 
+    tweets = []
+    for count, entity in enumerate(query, start=1):
+        tweet = {}
+        for new_name, name in select.items():
+            tweet[new_name] = entity.get(name)
+        tweets.append(tweet)
 
-def get_sentiment(hashtag, start_date, end_date=None):
-    query = create_query(
-        hashtag, ["CognitiveServicesSentimentScore"], start_date, end_date)
-
-    sentiment_sum = 0
-    for count, tweet in enumerate(query, start=1):
-        sentiment_sum += tweet.get("CognitiveServicesSentimentScore")
-        if count == 5:  # DEBUG
+        if count == max_tweets:
             break
 
-    if sentiment_sum == 0:
+    return tweets
+
+
+def get_average_sentiment(hashtag, start_date, end_date=None):
+    select = {"sentiment": "CognitiveServicesSentimentScore"}
+    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=5)
+
+    sentiment_sum = sum(t["sentiment"] for t in tweets)
+    count = len(tweets)
+
+    if count == 0:
         return {"count": 0}
 
     return {"sentiment": sentiment_sum / count,
@@ -45,17 +54,9 @@ def get_sentiment(hashtag, start_date, end_date=None):
 
 
 def get_binned_sentiment(hashtag, start_date, end_date, bins):
-    select = ["CreatedAt", "CognitiveServicesSentimentScore"]
-    query = create_query(hashtag, select, start_date, end_date)
-
-    tweets = []
-    for count, tweet in enumerate(query, start=1):
-        tweets.append({
-            "date": tweet.get("CreatedAt"),
-            "sentiment": tweet.get("CognitiveServicesSentimentScore")
-        })
-        if count == 10:  # DEBUG
-            break
+    select = {"date": "CreatedAt",
+              "sentiment": "CognitiveServicesSentimentScore"}
+    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=10)
 
     start = tweets[0].get("date")
     end = tweets[-1].get("date")
@@ -82,7 +83,7 @@ class AverageSentiment(Resource):
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
 
-        return get_sentiment(hashtag, start_date, end_date)
+        return get_average_sentiment(hashtag, start_date, end_date)
 
 
 class BinnedSentiment(Resource):
@@ -102,4 +103,4 @@ class CurrentSentiment(Resource):
         hour_ago = datetime.utcnow() - timedelta(seconds=3600)
         start_date = hour_ago.replace(microsecond=0).isoformat()
 
-        return get_sentiment(hashtag, start_date)
+        return get_average_sentiment(hashtag, start_date)
