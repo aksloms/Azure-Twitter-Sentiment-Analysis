@@ -2,3 +2,4 @@ flask
 flask_restful
 azure-data-tables
 python-dotenv
+pandas
