@@ -97,7 +97,7 @@ export default function Home() {
                             <Container className={classes.remove_space} style={backgroundStyleSecPlot}>
                                 <div className={classes.menuButton}>
 
-                                    <Button className={classes.button} variant="contained" color="primary" href="/plot/sentiment" >
+                                    <Button className={classes.button} variant="contained" color="secondary" href="/plot/sentiment" >
                                         Analiza aspektu
                                     </Button>
                                 </div>
