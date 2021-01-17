@@ -4,13 +4,14 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import {Slider} from "@material-ui/core";
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import {KeyboardDatePicker, MuiPickersUtilsProvider,} from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import 'date-fns';
-import {KeyboardDatePicker, MuiPickersUtilsProvider,} from '@material-ui/pickers';
 import Plot from 'react-plotly.js';
-import {Slider} from "@material-ui/core";
+
 
 const useStyles = makeStyles((theme) => ({
     grid: {

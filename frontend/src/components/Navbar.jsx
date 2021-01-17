@@ -9,8 +9,7 @@ import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
-        flexGrow: 1,
-        marginBottom: 10
+        flexGrow: 1
     },
     menuButton: {
         '& > *': {
