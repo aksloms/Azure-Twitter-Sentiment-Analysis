@@ -4,10 +4,10 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import {Slider} from "@material-ui/core";
+import { Slider } from "@material-ui/core";
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import {KeyboardDatePicker, MuiPickersUtilsProvider,} from '@material-ui/pickers';
+import { KeyboardDatePicker, MuiPickersUtilsProvider, } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import 'date-fns';
 import Plot from 'react-plotly.js';
@@ -50,8 +50,17 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 12,
         textAlign: "right",
     },
+    warningDate: {
+        textAlign: "center",
+        color: "#E56717",
+        fontSize: 12,
+    },
+    dateContent: {
+        paddingTop: 30
+    },
     icon: {
         fontSize: 40,
+        position: "absolute"
     },
 }));
 
@@ -93,10 +102,28 @@ export default function SentimentPlot() {
         );
     }
 
-    const [selectedDate, setSelectedDate] = React.useState(new Date('2021-01-10'));
+    const [selectedFirstDate, setSelectedFirstDate] = React.useState(new Date('2021-01-11'));
+    const [selectedSecDate, setSelectedSecDate] = React.useState(new Date('2021-01-12'));
 
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
+    const [firstDateWarning, setFirstDateWarning] = React.useState(false);
+    const [secDateWarning, setSecDateWarning] = React.useState(false);
+
+    const handleFirstDateChange = (date) => {
+        if (date.getTime() <= selectedSecDate.getTime()) {
+            setSelectedFirstDate(date);
+        }else{
+            setFirstDateWarning(true)
+            setTimeout(function(){ setFirstDateWarning(false); }, 2000)
+        }
+    };
+
+    const handleSecDateChange = (date) => {
+        if (date.getTime() >= selectedFirstDate.getTime()) {
+            setSelectedSecDate(date);
+        }else{
+            setSecDateWarning(true)
+            setTimeout(function(){ setSecDateWarning(false); }, 2000)
+        }
     };
 
 
@@ -108,23 +135,18 @@ export default function SentimentPlot() {
         return (<Grid item className={classes.plotItem}>
             <Card className={classes.largeCard}>
                 <CardContent className={classes.largeCardContent}>
-                    <TrendingUpIcon className={classes.icon} style={{display: 'block'}}/>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <div style={{textAlign: 'center'}}>
-                            <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            format="MM/dd/yyyy"
-                            margin="normal"
-                            id="date-picker-inline"
-                            label="Date picker inline"
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                            style={{padding: "15px"}}
-                        />
+
+                    <TrendingUpIcon className={classes.icon} style={{ display: 'block'}} />
+                    {firstDateWarning && <Typography className={classes.warningDate}>
+                        Wskazana data początkowa pozostaje w konflikcie z końcową
+                    </Typography>}
+
+                    {secDateWarning && <Typography className={classes.warningDate}>
+                        Wskazana data końcowa pozostaje w konflikcie z początkową
+                    </Typography>}
+
+                    <MuiPickersUtilsProvider utils={DateFnsUtils} >
+                        <div style={{ textAlign: 'center' }} className={classes.dateContent}>
                             <KeyboardDatePicker
                                 disableToolbar
                                 variant="inline"
@@ -132,12 +154,28 @@ export default function SentimentPlot() {
                                 margin="normal"
                                 id="date-picker-inline"
                                 label="Date picker inline"
-                                value={selectedDate}
-                                onChange={handleDateChange}
+                                value={selectedFirstDate}
+                                onChange={handleFirstDateChange}
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
                                 }}
-                                style={{padding: "15px"}}
+                                style={{ padding: "15px" }}
+                                autoOk={true}
+                            />
+                            <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
+                                format="MM/dd/yyyy"
+                                margin="normal"
+                                id="date-picker-inline"
+                                label="Date picker inline"
+                                value={selectedSecDate}
+                                onChange={handleSecDateChange}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                                style={{ padding: "15px" }}
+                                autoOk={true}
                             />
                             <Typography id="range-slider" gutterBottom>
                                 Zakres dat:
@@ -154,30 +192,47 @@ export default function SentimentPlot() {
             </Card>
         </Grid>)
     }
-
-
+    
     var trace1 = {
-        x: [1, 2, 3, 4],
+        x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
         y: [10, 15, 13, 17],
         type: 'scatter'
     };
 
     var trace2 = {
-        x: [1, 2, 3, 4],
+        x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
         y: [16, 5, 11, 9],
         type: 'scatter'
     };
+    //Sprawdzenie działania bardziej szczegółowego czasu
+    // var trace1 = {
+    //     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
+    //     y: [10, 15, 13, 17],
+    //     type: 'scatter'
+    // };
+
+    // var trace2 = {
+    //     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
+    //     y: [16, 5, 11, 9],
+    //     type: 'scatter'
+    // };
+
+    var layout = {
+        width: 630,
+        height: 440, 
+        title: 'A Fancy Plot'
+    }
 
     var data = [trace1, trace2];
     return (
         <div>
             <Grid container className={classes.grid}>
-                <SmallGridItem icon={<TrendingUpIcon className={classes.icon}/>} title={"Przeanalizowane tweety"}
-                               text={"1500"}/>
-                <SmallGridItem icon={<LocalOfferIcon className={classes.icon}/>} title={"Inne ciekawe liczby"}
-                               text={"1234"}/>
-                <DateAndTagPicker/>
-                <PlotItem layout={{width: 630, height: 440, title: 'A Fancy Plot'}} data={data}/>
+                <SmallGridItem icon={<TrendingUpIcon className={classes.icon} />} title={"Przeanalizowane tweety"}
+                    text={"1500"} />
+                <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Inne ciekawe liczby"}
+                    text={"1234"} />
+                <DateAndTagPicker />
+                <PlotItem layout={layout} data={data} />
             </Grid>
         </div>
     );
