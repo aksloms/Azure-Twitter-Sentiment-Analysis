@@ -4,15 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'date-fns';
-import Plot from 'react-plotly.js';
 
 import DateAndTagPicker from './DateAndTagPicker'
+import PlotItem from './PlotItem'
+import AnalysisSpecifier from './AnalysisSpecifier'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,9 +25,6 @@ const useStyles = makeStyles((theme) => ({
     },
     gridItem: {
         padding: "15px"
-    },
-    plotItem: {
-        padding: "15px",
     },
     card: {
         minWidth: 300,
@@ -48,10 +43,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 40,
         position: "absolute"
     },
-    button: {
-        width: "100%",
-        marginTop: 10
-    }
 }));
 
 
@@ -77,40 +68,12 @@ export default function SentimentPlot() {
         );
     }
 
-    const PlotItem = (props) => {
-        return (
-            <Grid item className={classes.plotItem}>
-                <Card className={classes.card}>
-                    <CardContent className={classes.plotCardContent}>
-                        <Plot
-                            data={props.data}
-                            layout={props.layout}
-                        />
-                    </CardContent>
-                </Card>
-            </Grid>
-        );
-    }
-
-    const ComboBox = (props) => {
-        return (
-            <Autocomplete
-                id="combo-box-demo"
-                options={props.tagArray}
-                getOptionLabel={(option) => option.hashtag}
-                style={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label={props.name} variant="outlined" />}
-            />
-        );
-    }
-
     const tagArray = [
-        { hashtag: '#Hot16' },
-        { hashtag: '#Lewy' },
-        { hashtag: '#PolishBoy' },
-        { hashtag: '#PWGoals' },
+        '#Hot16',
+        '#Lewy',
+        '#PolishBoy',
+        '#PWGoals',
     ]
-
 
     var trace1 = {
         x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
@@ -137,10 +100,11 @@ export default function SentimentPlot() {
     //     type: 'scatter'
     // };
 
+    const [titleValue, setTitleValue] = React.useState(tagArray[0])
     var layout = {
         width: 630,
         height: 440,
-        title: 'A Fancy Plot'
+        title: "A plot for hashtag: " + titleValue
     }
 
     var data = [trace1, trace2];
@@ -153,16 +117,11 @@ export default function SentimentPlot() {
                     text={"1234"} />
                 <DateAndTagPicker />
                 <PlotItem layout={layout} data={data} />
-
-                <Grid item className={classes.plotItem}>
-                    <Card className={classes.card}>
-                        <ComboBox tagArray={tagArray} name="Wybór hashtag" />
-                        <Button className={classes.button} variant="contained" color="primary" href="/plot/aspect" >
-                            Analiza aspektu
-                        </Button>
-                    </Card>
-                </Grid>
-
+                <AnalysisSpecifier 
+                    tagArray={tagArray} 
+                    name="Wybór hashtag"
+                    setTitleValue={setTitleValue} 
+                    defaultValue={titleValue}/>
             </Grid>
         </div>
     );

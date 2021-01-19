@@ -8,8 +8,6 @@ import AspectPlot from './components/AspectPlot'
 
 //TODOS
 
-//Zmiana hashtag powoduje zmianę tytułu wykresu
-//Graficzne ułożenie elementów
 //Skalowanie homepage do aplikacji mobilnej
 //Refaktoryzacja
 

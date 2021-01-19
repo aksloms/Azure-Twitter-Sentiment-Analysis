@@ -104,12 +104,6 @@ export default function SentimentPlot() {
         );
     }
     //Na sztywno ustawione dane
-    const tagArray = [
-        '#Hot16',
-        '#Lewy',
-        '#PolishBoy',
-        '#PWGoals',
-    ]
 
     const aspectArray = [
         'COVID',
@@ -164,7 +158,6 @@ export default function SentimentPlot() {
                 <PlotItem layout={layout} data={data} />
                 <Grid item className={classes.plotItem}>
                     <Card className={classes.card}>
-                            <ComboBox dataArray={tagArray} name="Wybór hashtag" />
                             <ComboBox dataArray={aspectArray} name="Wybór aspektu" />
                             <Button className={classes.button} variant="contained" color="primary" href="/plot/sentiment" >
                                 Analiza sentymentu
