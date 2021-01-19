@@ -8,10 +8,11 @@ import AspectPlot from './components/AspectPlot'
 
 //TODOS
 
-//Wprawić w działanie wyszukiwarkę w menu
-  //Usunąć ją ze strony głównej
-  //Stworzyć listę dostępnych hashtag
-  //Sprawić aby po wpisaniu podpowiadała zawarte w tablicy hashtagi
+//Zmiana hashtag powoduje zmianę tytułu wykresu
+//Graficzne ułożenie elementów
+//Skalowanie homepage do aplikacji mobilnej
+//Refaktoryzacja
+
 
 
 function App() {

@@ -4,13 +4,15 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { Slider } from "@material-ui/core";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { KeyboardDatePicker, MuiPickersUtilsProvider, } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import 'date-fns';
 import Plot from 'react-plotly.js';
+
+import DateAndTagPicker from './DateAndTagPicker'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,14 +34,6 @@ const useStyles = makeStyles((theme) => ({
     card: {
         minWidth: 300,
     },
-    largeCard: {
-        minWidth: 630,
-    },
-
-    largeCardContent: {
-        padding: "15px",
-    },
-
     plotCardContent: {
         padding: "0px",
     },
@@ -50,18 +44,14 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 12,
         textAlign: "right",
     },
-    warningDate: {
-        textAlign: "center",
-        color: "#E56717",
-        fontSize: 12,
-    },
-    dateContent: {
-        paddingTop: 30
-    },
     icon: {
         fontSize: 40,
         position: "absolute"
     },
+    button: {
+        width: "100%",
+        marginTop: 10
+    }
 }));
 
 
@@ -102,97 +92,26 @@ export default function SentimentPlot() {
         );
     }
 
-    const [selectedFirstDate, setSelectedFirstDate] = React.useState(new Date('2021-01-11'));
-    const [selectedSecDate, setSelectedSecDate] = React.useState(new Date('2021-01-12'));
-
-    const [firstDateWarning, setFirstDateWarning] = React.useState(false);
-    const [secDateWarning, setSecDateWarning] = React.useState(false);
-
-    const handleFirstDateChange = (date) => {
-        if (date.getTime() <= selectedSecDate.getTime()) {
-            setSelectedFirstDate(date);
-        }else{
-            setFirstDateWarning(true)
-            setTimeout(function(){ setFirstDateWarning(false); }, 2000)
-        }
-    };
-
-    const handleSecDateChange = (date) => {
-        if (date.getTime() >= selectedFirstDate.getTime()) {
-            setSelectedSecDate(date);
-        }else{
-            setSecDateWarning(true)
-            setTimeout(function(){ setSecDateWarning(false); }, 2000)
-        }
-    };
-
-
-    const DateAndTagPicker = (props) => {
-        const [value, setValue] = React.useState([10, 90]);
-        const handleChange = (event, newValue) => {
-            setValue(newValue);
-        };
-        return (<Grid item className={classes.plotItem}>
-            <Card className={classes.largeCard}>
-                <CardContent className={classes.largeCardContent}>
-
-                    <TrendingUpIcon className={classes.icon} style={{ display: 'block'}} />
-                    {firstDateWarning && <Typography className={classes.warningDate}>
-                        Wskazana data początkowa pozostaje w konflikcie z końcową
-                    </Typography>}
-
-                    {secDateWarning && <Typography className={classes.warningDate}>
-                        Wskazana data końcowa pozostaje w konflikcie z początkową
-                    </Typography>}
-
-                    <MuiPickersUtilsProvider utils={DateFnsUtils} >
-                        <div style={{ textAlign: 'center' }} className={classes.dateContent}>
-                            <KeyboardDatePicker
-                                disableToolbar
-                                variant="inline"
-                                format="MM/dd/yyyy"
-                                margin="normal"
-                                id="date-picker-inline"
-                                label="Date picker inline"
-                                value={selectedFirstDate}
-                                onChange={handleFirstDateChange}
-                                KeyboardButtonProps={{
-                                    'aria-label': 'change date',
-                                }}
-                                style={{ padding: "15px" }}
-                                autoOk={true}
-                            />
-                            <KeyboardDatePicker
-                                disableToolbar
-                                variant="inline"
-                                format="MM/dd/yyyy"
-                                margin="normal"
-                                id="date-picker-inline"
-                                label="Date picker inline"
-                                value={selectedSecDate}
-                                onChange={handleSecDateChange}
-                                KeyboardButtonProps={{
-                                    'aria-label': 'change date',
-                                }}
-                                style={{ padding: "15px" }}
-                                autoOk={true}
-                            />
-                            <Typography id="range-slider" gutterBottom>
-                                Zakres dat:
-                            </Typography>
-                            <Slider
-                                value={value}
-                                onChange={handleChange}
-                                valueLabelDisplay="auto"
-                                aria-labelledby="range-slider"
-                            />
-                        </div>
-                    </MuiPickersUtilsProvider>
-                </CardContent>
-            </Card>
-        </Grid>)
+    const ComboBox = (props) => {
+        return (
+            <Autocomplete
+                id="combo-box-demo"
+                options={props.tagArray}
+                getOptionLabel={(option) => option.hashtag}
+                style={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label={props.name} variant="outlined" />}
+            />
+        );
     }
-    
+
+    const tagArray = [
+        { hashtag: '#Hot16' },
+        { hashtag: '#Lewy' },
+        { hashtag: '#PolishBoy' },
+        { hashtag: '#PWGoals' },
+    ]
+
+
     var trace1 = {
         x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
         y: [10, 15, 13, 17],
@@ -204,6 +123,7 @@ export default function SentimentPlot() {
         y: [16, 5, 11, 9],
         type: 'scatter'
     };
+
     //Sprawdzenie działania bardziej szczegółowego czasu
     // var trace1 = {
     //     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
@@ -219,7 +139,7 @@ export default function SentimentPlot() {
 
     var layout = {
         width: 630,
-        height: 440, 
+        height: 440,
         title: 'A Fancy Plot'
     }
 
@@ -233,6 +153,16 @@ export default function SentimentPlot() {
                     text={"1234"} />
                 <DateAndTagPicker />
                 <PlotItem layout={layout} data={data} />
+
+                <Grid item className={classes.plotItem}>
+                    <Card className={classes.card}>
+                        <ComboBox tagArray={tagArray} name="Wybór hashtag" />
+                        <Button className={classes.button} variant="contained" color="primary" href="/plot/aspect" >
+                            Analiza aspektu
+                        </Button>
+                    </Card>
+                </Grid>
+
             </Grid>
         </div>
     );
