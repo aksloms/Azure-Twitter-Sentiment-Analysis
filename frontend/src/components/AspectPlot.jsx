@@ -11,8 +11,8 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'date-fns';
 import Plot from 'react-plotly.js';
+import DatePicker from "./DatePicker";
 
-import DateAndTagPicker from './DateAndTagPicker'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -154,7 +154,7 @@ export default function SentimentPlot() {
                     text={numOfTweets} />
                 <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Inne ciekawe liczby"}
                     text={interestingNumbers} />
-                <DateAndTagPicker />
+                <DatePicker />
                 <PlotItem layout={layout} data={data} />
                 <Grid item className={classes.plotItem}>
                     <Card className={classes.card}>
