@@ -12,7 +12,7 @@ terraform {
       # backward compatibility for commonly-used providers, but recommended for
       # explicitness.
       source  = "hashicorp/azurerm"
-      version = "~> 2.41.0"
+      version = "~> 2.44.0"
     }
   }
 }
@@ -194,6 +194,39 @@ resource "azurerm_function_app" "processTweetsFA" {
   }
 }
 
+
+#############################################
+############ Backend Python App #############
+#############################################
+
+resource "azurerm_app_service_plan" "backendAppServicePlan" {
+  name                = var.backendAppServicePlanName
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  kind = "Linux"
+  reserved = true
+
+  sku {
+    tier = "Free"
+    size = "F1"
+  }
+}
+
+resource "azurerm_app_service" "backendAppService" {
+  name                = var.backendAppServiceName
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_app_service_plan.backendAppServicePlan.id
+
+  site_config {
+    use_32_bit_worker_process = true
+    linux_fx_version = "PYTHON|3.8"
+  }
+
+  app_settings = {
+    "CONNECTION_STRING" = azurerm_storage_account.dataStorage.primary_connection_string
+  }
+}
 
 
 ######################################################################

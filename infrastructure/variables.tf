@@ -91,3 +91,13 @@ variable "processTweetsAppInsightsName" {
 variable "processTweetsFunctionAppName" {
   type = string
 }
+
+# Backend Python App
+
+variable "backendAppServicePlanName" {
+  type = string
+}
+
+variable "backendAppServiceName" {
+  type = string
+}

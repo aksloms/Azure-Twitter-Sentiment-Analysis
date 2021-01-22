@@ -15,6 +15,9 @@ processTweetsServicePlanName = "processTweetsASP"
 processTweetsAppInsightsName = "processTweetsAI"
 processTweetsFunctionAppName = "processTweetsFA-PW"
 
+backendAppServicePlanName = "backendASP-PW"
+backendAppServiceName     = "backendAS-PW"
+
 hashtags = [
   "#kwarantanna", 
   "#vege", 
