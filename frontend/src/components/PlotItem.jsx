@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PlotItem(props) {
     const classes = useStyles();
-
+    
     return (
         <Grid item className={classes.plotItem}>
             <Card className={classes.card}>

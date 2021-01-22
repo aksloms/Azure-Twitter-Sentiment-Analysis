@@ -8,10 +8,11 @@ import AspectPlot from './components/AspectPlot'
 
 //TODOS
 
+//Usuwanie kolejnego hashtag
+//Dodawanie aspektów w aspekcie
+//Wybrany hashtag wędruje do aspektu
+
 //Skalowanie homepage do aplikacji mobilnej
-//Refaktoryzacja
-
-
 
 function App() {
   return (

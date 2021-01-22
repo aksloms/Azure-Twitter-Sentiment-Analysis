@@ -87,7 +87,6 @@ const trace4 = {
 // };
 
 const defaultData = [trace1, trace2, trace3, trace4];
-
 const tagArray = [
     '#Hot16',
     '#Lewy',
@@ -124,9 +123,10 @@ export default function SentimentPlot() {
         for(var i = 0; i < hashtags.length; i++){
             newData.push(defaultData[tagArray.indexOf(hashtags[i])]);
         }
-        const newLayout = defaultData;
-        newLayout.title =  "A plot for hashtags: " + hashtags.toString();
-        setPlot(<PlotItem layout={newLayout} data={newData} />)
+        // const newLayout = defaultData;
+        // newLayout.title =  "A plot for hashtags: " + hashtags.toString();
+        defaultLayout.title =  "A plot for hashtags: " + hashtags.toString();
+        setPlot(<PlotItem layout={defaultLayout} data={newData} />)
     }
 
     return (
