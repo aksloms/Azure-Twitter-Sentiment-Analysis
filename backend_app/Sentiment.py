@@ -1,10 +1,10 @@
 from azure.data.tables import TableClient
 from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from datetime import datetime, timedelta
 from config import CONNECTION_STRING, TABLE_NAME
-import pandas as pd
 from math import ceil
+import pandas as pd
 
 
 client = TableClient.from_connection_string(
@@ -77,30 +77,50 @@ def get_binned_sentiment(hashtag, start_date, end_date, bins):
     return {"dates": dates, "sentiments": sentiments}
 
 
+def parse_arguments(request, names):
+    parser = reqparse.RequestParser(bundle_errors=True)
+
+    for name in names:
+        help_msg = name + " cannot be blank."
+        parser.add_argument(name, required=True,
+                            help=help_msg, location="args")
+
+    return parser.parse_args()
+
+
 class AverageSentiment(Resource):
     def get(self):
-        hashtag = request.args.get("hashtag")
-        start_date = request.args.get("start_date")
-        end_date = request.args.get("end_date")
+        args = parse_arguments(
+            request, ["hashtag", "start_date", "end_date"])
+
+        hashtag = args["hashtag"]
+        start_date = args["start_date"]
+        end_date = args["end_date"]
 
         return get_average_sentiment(hashtag, start_date, end_date)
 
 
 class BinnedSentiment(Resource):
     def get(self):
-        hashtag = request.args.get("hashtag")
-        start_date = request.args.get("start_date")
-        end_date = request.args.get("end_date")
-        bins = int(request.args.get("bins"))
+        args = parse_arguments(
+            request, ["hashtag", "start_date", "end_date", "bins"])
+
+        hashtag = args["hashtag"]
+        start_date = args["start_date"]
+        end_date = args["end_date"]
+        bins = int(args["bins"])
+
+        if bins < 2:
+            return {"message": {"bins": "Number of bins must be greater than 1."}}, 400
 
         return get_binned_sentiment(hashtag, start_date, end_date, bins)
 
 
 class CurrentSentiment(Resource):
     def get(self):
-        hashtag = request.args.get("hashtag")
+        args = parse_arguments(request, ["hashtag"])
 
         hour_ago = datetime.utcnow() - timedelta(seconds=3600)
         start_date = hour_ago.replace(microsecond=0).isoformat()
 
-        return get_average_sentiment(hashtag, start_date)
+        return get_average_sentiment(args["hashtag"], start_date)
