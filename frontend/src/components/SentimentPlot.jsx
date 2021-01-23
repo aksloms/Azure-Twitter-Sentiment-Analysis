@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
@@ -8,10 +8,10 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'date-fns';
 
-
 import PlotItem from './PlotItem'
 import AnalysisSpecifier from './AnalysisSpecifier'
 import DatePicker from "./DatePicker";
+import FetchData from "../services/FetchData.service"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -29,81 +29,87 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         minWidth: 300,
-    },
-    plotCardContent: {
-        padding: "0px",
+        minHeight: 280
     },
     title: {
         fontSize: 14,
     },
     pos: {
+        //marginTop: 50,
         marginBottom: 12,
         textAlign: "right",
     },
     icon: {
         fontSize: 40,
-        position: "absolute"
+        display: 'block',
     },
 }));
 
 const defaultLayout = {
     width: 630,
     height: 440,
-    title: "A plot for hashtags: "
+    //title: "A plot for hashtags: ",
+    yaxis: {range: [0, 1]},
+    legend: {
+        x: 0,
+        y: 1,
+    },
+    margin: {
+        l: 50,
+        r: 50,
+        b: 50,
+        t: 50,
+        pad: 4
+    }
 }
-
-const trace1 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [10, 15, 13, 17],
-    type: 'scatter'
-};
-const trace2 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [10, 18, 22, 24],
-    type: 'scatter'
-};
-const trace3 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [10, 17, 17, 19],
-    type: 'scatter'
-};
-const trace4 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [9, 10, 11, 12],
-    type: 'scatter'
-};
-
-//Sprawdzenie działania bardziej szczegółowego czasu
-// var trace1 = {
-//     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
-//     y: [10, 15, 13, 17],
-//     type: 'scatter'
-// };
-
-// var trace2 = {
-//     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
-//     y: [16, 5, 11, 9],
-//     type: 'scatter'
-// };
-
-const defaultData = [trace1, trace2, trace3, trace4];
-const tagArray = [
-    '#Hot16',
-    '#Lewy',
-    '#PolishBoy',
-    '#PWGoals',
-]
-
 export default function SentimentPlot() {
     const classes = useStyles();
-    const [titleValue, setTitleValue] = React.useState(tagArray[0])
-    const [plot, setPlot] = React.useState(<PlotItem layout={defaultLayout} data={[]} />)
+    const [titleValue, setTitleValue] = React.useState(" ");
+    const [availableHashtags, setAvailableHashtags] = React.useState();
+    const [hashtags, setHashtags] = React.useState(["#COVID19"]);
+    const [plotData, setPlotData] = React.useState([]);
+    const [date, setDate] = React.useState([new Date('2021-01-05'), new Date('2021-01-30')]);
+
+    useEffect(() => {
+        var fetchedData = [];
+        var validHashtags = [...new Set(hashtags.filter(Boolean))]; //usuniecie nulli i duplikatów
+        validHashtags.forEach((value, index, array) => {
+            FetchData.getSentimentForHashtag(
+                value.substring(1), //usuwa znak "#"
+                date[0].toISOString().split(".")[0],//usuwa milisekundy z daty
+                date[1].toISOString().split(".")[0],
+                100
+            ).then((response) => {
+                if (response && response.data) {
+                    const trace = {
+                        x: response.data.dates,
+                        y: response.data.sentiments,
+                        type: 'scatter',
+                        showlegend: true,
+                        name: value,
+                    };
+                    fetchedData = [...fetchedData, trace]
+                    setPlotData(fetchedData);
+                }
+                return fetchedData;
+            }).then((fetchedData) => {
+                setPlotData(fetchedData);
+            });
+        });
+    }, [hashtags, date]);
+
+
+    useEffect(() => {
+        FetchData.getHashtags().then((response) => {
+            setAvailableHashtags(response.data.hashtags);
+        });
+    }, []);
 
     const SmallGridItem = (props) => {
         return (
             <Grid item className={classes.gridItem}>
                 <Card className={classes.card}>
-                    <CardContent>
+                    <CardContent style={{padding: "15px"}}>
                         {props.icon}
                         <Typography className={classes.pos} color="textSecondary">
                             {props.title}
@@ -117,32 +123,20 @@ export default function SentimentPlot() {
         );
     }
 
-    function setData(hashtags){
-        //fetch data
-        const newData = [];
-        for(var i = 0; i < hashtags.length; i++){
-            newData.push(defaultData[tagArray.indexOf(hashtags[i])]);
-        }
-        // const newLayout = defaultData;
-        // newLayout.title =  "A plot for hashtags: " + hashtags.toString();
-        defaultLayout.title =  "A plot for hashtags: " + hashtags.toString();
-        setPlot(<PlotItem layout={defaultLayout} data={newData} />)
-    }
-
     return (
         <div>
             <Grid container className={classes.grid}>
-                <SmallGridItem icon={<TrendingUpIcon className={classes.icon} />} title={"Przeanalizowane tweety"}
-                    text={"1500"} />
-                <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Inne ciekawe liczby"}
-                    text={"1234"} />
-                <DatePicker />
-                {plot}
-                <AnalysisSpecifier 
-                    tagArray={tagArray} 
+                <SmallGridItem icon={<TrendingUpIcon className={classes.icon}/>} title={"Przeanalizowane tweety"}
+                               text={"1500"}/>
+                <SmallGridItem icon={<LocalOfferIcon className={classes.icon}/>} title={"Inne ciekawe liczby"}
+                               text={"1234"}/>
+                <DatePicker onDateChange={(newDate) => setDate([...newDate])}/>
+                <PlotItem layout={defaultLayout} data={plotData}/>
+                <AnalysisSpecifier
+                    tagArray={availableHashtags}
                     name="Wybór hashtaga"
                     setTitleValue={setTitleValue}
-                    getHashtags={setData}
+                    getHashtags={(newHashtags) => setHashtags([...newHashtags])}
                     defaultValue={titleValue}/>
             </Grid>
         </div>

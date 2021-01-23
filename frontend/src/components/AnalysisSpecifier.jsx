@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -7,7 +7,9 @@ import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button';
 import CardContent from "@material-ui/core/CardContent";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Container, IconButton } from '@material-ui/core';
+import {Container, IconButton} from '@material-ui/core';
+import ListIcon from '@material-ui/icons/List';
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
     gridItem: {
@@ -27,36 +29,39 @@ const useStyles = makeStyles((theme) => ({
     },
     hashtagPick: {
         padding: 0,
-        display: "flex"
+        display: "flex",
+        //justifyContent: 'center',
     },
     icon: {
         fontSize: 40,
         position: "relative",
     },
-
+    titlePos: {
+        marginBottom: 12,
+        textAlign: "right",
+    },
 }));
 
 export default function AnalysisSpecifier(props) {
     const classes = useStyles();
     const [hashtags] = React.useState([]);
+    const options = props.tagArray == null ? [" "] : props.tagArray;
     const HashtagAutocomplete = (key, value) => {
         return (
             <Container key={key} className={classes.hashtagPick}>
                 <Autocomplete
                     className={classes.autocomplete}
-                    options={props.tagArray}
+                    options={options}
                     getOptionLabel={(option) => option}
-                    renderInput={(params) => <TextField {...params} label={props.name} variant="outlined" />}
+                    renderInput={(params) => <TextField {...params} label={props.name} variant="outlined"/>}
                     onChange={(event, value) => {
                         handleComboBoxChange(event, value, key)
                     }}
-                    value={value} 
+                    value={value}
                 />
-                <IconButton onClick={() => {
-                        removeHashtagPicker(key)
-                    }}>
-                    <DeleteIcon className={classes.icon} />
-                </IconButton>
+                {(key !== 0) && (<IconButton onClick={() => {removeHashtagPicker(key)}}>
+                    <DeleteIcon className={classes.icon}/>
+                </IconButton>)}
             </Container>
         );
     }
@@ -85,13 +90,17 @@ export default function AnalysisSpecifier(props) {
         <Grid item className={classes.gridItem}>
             <Card className={classes.card}>
                 <CardContent>
+                    <ListIcon className={classes.icon}/>
+                    <Typography className={classes.titlePos} color="textSecondary">
+                        Wybór hashtagów
+                    </Typography>
                     {hashtagPickers.map((item, key) => {
                         var value = hashtags[key]
-                        if(value === undefined)
+                        if (value === undefined)
                             value = ""
                         return (HashtagAutocomplete(key, value));
                     })}
-                    <Button className={classes.button} variant="contained" color="secondary" onClick={addHashtagPicker}>
+                    <Button className={classes.button} variant="contained" onClick={addHashtagPicker}>
                         Dodaj kolejny hashtag</Button>
                     <Button className={classes.button} variant="contained" color="primary" href="/plot/aspect">
                         Analiza aspektu

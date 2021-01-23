@@ -4,8 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import {Slider} from "@material-ui/core";
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import {Box, Slider} from "@material-ui/core";
+import DateRangeIcon from '@material-ui/icons/DateRange';
 import {KeyboardDatePicker, MuiPickersUtilsProvider,} from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -18,13 +18,15 @@ const useStyles = makeStyles((theme) => ({
     },
     largeCard: {
         minWidth: 630,
+        minHeight: 280
     },
     largeCardContent: {
         padding: "15px",
     },
     icon: {
         fontSize: 40,
-        position: "absolute"
+        //position: "absolute",
+        display: 'block'
     },
     warningDate: {
         textAlign: "center",
@@ -35,19 +37,33 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "120px"
     },
     dateContent: {
-        paddingTop: 30
+        //paddingTop: 30
     },
+    titlePos: {
+        marginBottom: 12,
+        textAlign: "right",
+    }
 }));
+
+function ValueLabelComponent(props) {
+    const {children, open, value} = props;
+    return (
+        <Tooltip open={open} enterDelay={500} leaveDelay={200} placement="top" title={value}>
+            {children}
+        </Tooltip>
+    );
+}
+
 
 const convertToUTC = (date) => {
     return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 }
 
-export default function DatePicker() {
+export default function DatePicker(props) {
     const classes = useStyles();
 
-    const start_date = new Date('2021-01-01');
+    const start_date = new Date('2021-01-05');
     const start_date_utc = convertToUTC(start_date);
 
     const end_date = new Date('2021-01-30');
@@ -61,17 +77,21 @@ export default function DatePicker() {
 
     const [value, setValue] = React.useState([start_date_utc, end_date_utc]);
 
-    const handleChange = (event, newValue) => {
+    const sliderChangeCommitted = (newValue) => {
         setValue(newValue);
         setSelectedFirstDate(new Date(newValue[0]));
         setSelectedSecDate(new Date(newValue[1]));
+        props.onDateChange([new Date(newValue[0]), new Date(newValue[1])]);
     };
 
+    const sliderChanged = (even, value) => {
+        setValue(value);
+    };
 
     const handleFirstDateChange = (date) => {
         if (date.getTime() <= selectedSecDate.getTime()) {
             setSelectedFirstDate(date);
-            setValue([convertToUTC(date), value[1]])
+            sliderChangeCommitted([convertToUTC(date), value[1]])
         } else {
             setFirstDateWarning(true)
             setTimeout(function () {
@@ -83,7 +103,7 @@ export default function DatePicker() {
     const handleSecDateChange = (date) => {
         if (date.getTime() >= selectedFirstDate.getTime()) {
             setSelectedSecDate(date);
-            setValue([value[0],convertToUTC(date)])
+            sliderChangeCommitted([value[0],convertToUTC(date)])
         } else {
             setSecDateWarning(true)
             setTimeout(function () {
@@ -96,22 +116,14 @@ export default function DatePicker() {
         return new Date(value).toLocaleString();
     }
 
-    function ValueLabelComponent(props) {
-        const {children, open, value} = props;
-
-        return (
-            <Tooltip open={open} enterTouchDelay={0} placement="top" title={value}>
-                {children}
-            </Tooltip>
-        );
-    }
-
     return (
         <Grid item className={classes.plotItem}>
             <Card className={classes.largeCard}>
                 <CardContent className={classes.largeCardContent}>
-
-                    <TrendingUpIcon className={classes.icon} style={{display: 'block'}}/>
+                    <DateRangeIcon className={classes.icon}/>
+                    <Typography className={classes.titlePos} color="textSecondary">
+                        Wybór przedziału czasu
+                    </Typography>
                     {firstDateWarning && <Typography className={classes.warningDate}>
                         Wskazana data początkowa pozostaje w konflikcie z końcową
                     </Typography>}
@@ -119,7 +131,6 @@ export default function DatePicker() {
                     {secDateWarning && <Typography className={classes.warningDate}>
                         Wskazana data końcowa pozostaje w konflikcie z początkową
                     </Typography>}
-
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <div style={{textAlign: 'center'}} className={classes.dateContent}>
                             <KeyboardDatePicker
@@ -127,7 +138,6 @@ export default function DatePicker() {
                                 variant="inline"
                                 format="MM/dd/yyyy"
                                 margin="normal"
-                                id="date-picker-inline"
                                 label="Data początkowa"
                                 value={selectedFirstDate}
                                 onChange={handleFirstDateChange}
@@ -142,7 +152,6 @@ export default function DatePicker() {
                                 variant="inline"
                                 format="MM/dd/yyyy"
                                 margin="normal"
-                                id="date-picker-inline"
                                 label="Data końcowa"
                                 value={selectedSecDate}
                                 onChange={handleSecDateChange}
@@ -155,17 +164,23 @@ export default function DatePicker() {
                             <Typography id="range-slider" gutterBottom>
                                 Zakres dat:
                             </Typography>
-                            <Slider
-                                min={start_date_utc}
-                                max={end_date_utc}
-                                ValueLabelComponent={ValueLabelComponent}
-                                value={value}
-                                getAriaValueText={valueLabelFormat}
-                                valueLabelFormat={valueLabelFormat}
-                                onChange={handleChange}
-                                valueLabelDisplay="auto"
-                                aria-labelledby="range-slider"
-                            />
+                            <Box style={{padding: '0px 17px'}}>
+                                <Slider
+                                    className={classes.slider}
+                                    min={start_date_utc}
+                                    max={end_date_utc}
+                                    ValueLabelComponent={ValueLabelComponent}
+                                    value={value}
+                                    getAriaValueText={valueLabelFormat}
+                                    valueLabelFormat={valueLabelFormat}
+                                    onChange={sliderChanged}
+                                    //valueLabelDisplay="auto"
+                                    aria-labelledby="range-slider"
+                                    onChangeCommitted={(e, v) => sliderChangeCommitted(v)}
+                                    step={12*60*60*1000} //co 12h
+                                    //marks
+                                />
+                            </Box>
                         </div>
                     </MuiPickersUtilsProvider>
                 </CardContent>
