@@ -41,7 +41,7 @@ def query_tweets(hashtag, select, start_date, end_date=None, max_tweets=100):
 
 def get_average_sentiment(hashtag, start_date, end_date=None):
     select = {"sentiment": "CognitiveServicesSentimentScore"}
-    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=5)
+    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=20)
 
     sentiment_sum = sum(t["sentiment"] for t in tweets)
     count = len(tweets)
@@ -56,7 +56,7 @@ def get_average_sentiment(hashtag, start_date, end_date=None):
 def get_binned_sentiment(hashtag, start_date, end_date, bins):
     select = {"date": "CreatedAt",
               "sentiment": "CognitiveServicesSentimentScore"}
-    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=10)
+    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=50)
 
     start = tweets[0].get("date")
     end = tweets[-1].get("date")

@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Api
+from flask_cors import CORS
 
 from AvailableHashtags import AvailableHashtags
 from SampleTweets import SampleTweets
@@ -7,6 +8,7 @@ from Sentiment import AverageSentiment, CurrentSentiment, BinnedSentiment
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 
 api.add_resource(SampleTweets, '/',)
