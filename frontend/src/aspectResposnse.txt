@@ -1,0 +1,7 @@
+Input: hashtag, startDate, endDate, bins
+{
+    x: [date_1, date_2, ...],
+    aspect_1: [sentiment_1, sentiment_2, ...],
+    aspect_2: [sentiment_1, sentiment_2, ...],
+    ...
+}

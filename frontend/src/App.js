@@ -8,9 +8,8 @@ import AspectPlot from './components/AspectPlot'
 
 //TODOS
 
-//Usuwanie kolejnego hashtag
-//Dodawanie aspektów w aspekcie
-//Wybrany hashtag wędruje do aspektu
+//usuwanie autocomplete poprzez X w tekście
+//Ogarnięcie małych card z ciekawymi informacjami (trend??)
 
 //Skalowanie homepage do aplikacji mobilnej
 

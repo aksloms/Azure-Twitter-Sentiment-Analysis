@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Plot from 'react-plotly.js';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import Typography from "@material-ui/core/Typography";
+import Container from '@material-ui/core/Container';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,23 +25,28 @@ const useStyles = makeStyles((theme) => ({
         padding: "15px"
     },
     pos: {
-        marginBottom: 12,
-        marginRight: 15,
+        margin: 15,
         textAlign: "right",
+        marginLeft: "auto"
     },
+    container: {
+        display: "flex"
+    }
 }));
 
 export default function PlotItem(props) {
     const classes = useStyles();
-    
+
     return (
         <Grid item className={classes.plotItem}>
             <Card className={classes.card}>
                 <CardContent className={classes.plotCardContent}>
-                    <TimelineIcon className={classes.icon}/>
-                    <Typography className={classes.pos} color="textSecondary">
-                        Analiza sentymentu dla wybranych hashtagów
-                    </Typography>
+                    <Container className={classes.container}>
+                        <TimelineIcon className={classes.icon} />
+                        <Typography className={classes.pos} color="textSecondary">
+                            {props.title}
+                        </Typography>
+                    </Container>
                     <Plot
                         data={props.data}
                         layout={props.layout}

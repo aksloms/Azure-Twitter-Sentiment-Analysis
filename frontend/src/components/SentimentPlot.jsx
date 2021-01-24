@@ -64,11 +64,12 @@ const defaultLayout = {
 }
 export default function SentimentPlot() {
     const classes = useStyles();
-    const [titleValue, setTitleValue] = React.useState(" ");
     const [availableHashtags, setAvailableHashtags] = React.useState();
-    const [hashtags, setHashtags] = React.useState(["#COVID19"]);
+    const [hashtags, setHashtags] = React.useState(
+        JSON.parse(sessionStorage.getItem('pickedHashtags')) || ["#COVID19"]
+        );
     const [plotData, setPlotData] = React.useState([]);
-    const [date, setDate] = React.useState([new Date('2021-01-05'), new Date('2021-01-30')]);
+    const [date, setDate] = React.useState([new Date('2021-01-05'), new Date('2021-01-30')]);//Może dać dzisiejszą?
 
     useEffect(() => {
         var fetchedData = [];
@@ -131,13 +132,15 @@ export default function SentimentPlot() {
                 <SmallGridItem icon={<LocalOfferIcon className={classes.icon}/>} title={"Inne ciekawe liczby"}
                                text={"1234"}/>
                 <DatePicker onDateChange={(newDate) => setDate([...newDate])}/>
-                <PlotItem layout={defaultLayout} data={plotData}/>
+                <PlotItem 
+                    layout={defaultLayout} 
+                    data={plotData}
+                    title="Analiza sentymentu dla wybranych hashtagów"
+                />
                 <AnalysisSpecifier
-                    tagArray={availableHashtags}
-                    name="Wybór hashtaga"
-                    setTitleValue={setTitleValue}
-                    getHashtags={(newHashtags) => setHashtags([...newHashtags])}
-                    defaultValue={titleValue}/>
+                    optionsArray={availableHashtags}
+                    type="sentiment"
+                    setChosenAutocomplete={(newHashtags) => setHashtags([...newHashtags])}/>
             </Grid>
         </div>
     );

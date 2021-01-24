@@ -4,14 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'date-fns';
-import Plot from 'react-plotly.js';
 import DatePicker from "./DatePicker";
+
+import PlotItem from './PlotItem'
+import AnalysisSpecifier from './AnalysisSpecifier'
 
 
 
@@ -53,10 +52,61 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 10
     }
 }));
+//Sztywne dane
+const aspectDict = {
+    '#COVID19': ["PIS", "PO", "rząd"],
+    '#vege': ["nowość", "dziwactwo", "moda"],
+    '#kryzys': ["gospodarka", "minister", "rolnictwo"]
+}
 
+const defaultLayout = {
+    width: 630,
+    height: 440,
+    yaxis: { range: [0, 1] },
+    legend: {
+        x: 0,
+        y: 1,
+    },
+    margin: {
+        l: 50,
+        r: 50,
+        b: 50,
+        t: 50,
+        pad: 4
+    }
+}
 
-export default function SentimentPlot() {
+const trace1 = {
+    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
+    y: [0.1, 0.5, 0.3, 0.7],
+    type: 'scatter'
+};
+
+const trace2 = {
+    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
+    y: [0.6, 0.5, 0.1, 0.9],
+    type: 'scatter'
+};
+
+const trace3 = {
+    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
+    y: [0.7, 0.9, 0.1, 0.4],
+    type: 'scatter'
+};
+
+const numOfTweets = 1500;
+const interestingNumbers = 1234;
+
+const data = [trace1, trace2, trace3];
+
+export default function AspectPlot() {
     const classes = useStyles();
+
+    const [aspectHashtag] = React.useState(
+        sessionStorage.getItem('chosenAspectHashtag') || "#COVID19"
+    );
+    const [aspects, setAspects] = React.useState([])
+
 
     const SmallGridItem = (props) => {
         return (
@@ -76,77 +126,8 @@ export default function SentimentPlot() {
             </Grid>
         );
     }
+    const aspectArr = aspectDict[aspectHashtag]
 
-    const PlotItem = (props) => {
-        return (
-            <Grid item className={classes.plotItem}>
-                <Card className={classes.card}>
-                    <CardContent className={classes.plotCardContent}>
-                        <Plot
-                            data={props.data}
-                            layout={props.layout}
-                        />
-                    </CardContent>
-                </Card>
-            </Grid>
-        );
-    }
-
-    const ComboBox = (props) => {
-        return (
-            <Autocomplete
-                id="combo-box-demo"
-                options={props.dataArray}
-                getOptionLabel={(option) => option}
-                style={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label={props.name} variant="outlined" />}
-            />
-        );
-    }
-    //Na sztywno ustawione dane
-
-    const aspectArray = [
-        'COVID',
-        'Szcepionka',
-        'Polityka',
-        'Trump',
-    ]
-
-    var trace1 = {
-        x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-        y: [10, 15, 13, 17],
-        type: 'scatter'
-    };
-
-    var trace2 = {
-        x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-        y: [16, 5, 11, 9],
-        type: 'scatter'
-    };
-
-    var numOfTweets = 1500;
-    var interestingNumbers = 1234;
-
-    //Sprawdzenie działania bardziej szczegółowego czasu
-    // var trace1 = {
-    //     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
-    //     y: [10, 15, 13, 17],
-    //     type: 'scatter'
-    // };
-
-    // var trace2 = {
-    //     x: ['1999-01-11 12:12:13', '1999-01-11 12:12:14', '1999-01-11 12:12:15', '1999-01-11 12:12:16'],
-    //     y: [16, 5, 11, 9],
-    //     type: 'scatter'
-    // };
-
-    var layout = {
-        width: 630,
-        height: 440,
-        title: 'A Fancy Plot'
-    }
-
-    var data = [trace1, trace2];
     return (
         <div>
             <Grid container className={classes.grid}>
@@ -155,15 +136,14 @@ export default function SentimentPlot() {
                 <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Inne ciekawe liczby"}
                     text={interestingNumbers} />
                 <DatePicker />
-                <PlotItem layout={layout} data={data} />
-                <Grid item className={classes.plotItem}>
-                    <Card className={classes.card}>
-                            <ComboBox dataArray={aspectArray} name="Wybór aspektu" />
-                            <Button className={classes.button} variant="contained" color="primary" href="/plot/sentiment" >
-                                Analiza sentymentu
-                        </Button>
-                    </Card>
-                </Grid>
+                <PlotItem 
+                    layout={defaultLayout} 
+                    data={data}
+                    title="Analiza sentymenty dla wybranych aspektów" />
+                <AnalysisSpecifier
+                    optionsArray={aspectArr}
+                    type="aspect"
+                    setChosenAutocomplete={(newAspects) => setAspects([...newAspects])}/>
             </Grid>
         </div>
     );

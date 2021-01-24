@@ -4,9 +4,9 @@ import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import {Box, Slider} from "@material-ui/core";
+import { Box, Container, Slider } from "@material-ui/core";
 import DateRangeIcon from '@material-ui/icons/DateRange';
-import {KeyboardDatePicker, MuiPickersUtilsProvider,} from '@material-ui/pickers';
+import { KeyboardDatePicker, MuiPickersUtilsProvider, } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import Tooltip from '@material-ui/core/Tooltip';
 //import PropTypes from 'prop-types';
@@ -40,13 +40,18 @@ const useStyles = makeStyles((theme) => ({
         //paddingTop: 30
     },
     titlePos: {
-        marginBottom: 12,
+        margin: 15,
         textAlign: "right",
+        marginLeft: "auto"
+    },
+    titleContainer: {
+        display: "flex"
     }
+    
 }));
 
 function ValueLabelComponent(props) {
-    const {children, open, value} = props;
+    const { children, open, value } = props;
     return (
         <Tooltip open={open} enterDelay={500} leaveDelay={200} placement="top" title={value}>
             {children}
@@ -103,7 +108,7 @@ export default function DatePicker(props) {
     const handleSecDateChange = (date) => {
         if (date.getTime() >= selectedFirstDate.getTime()) {
             setSelectedSecDate(date);
-            sliderChangeCommitted([value[0],convertToUTC(date)])
+            sliderChangeCommitted([value[0], convertToUTC(date)])
         } else {
             setSecDateWarning(true)
             setTimeout(function () {
@@ -120,10 +125,12 @@ export default function DatePicker(props) {
         <Grid item className={classes.plotItem}>
             <Card className={classes.largeCard}>
                 <CardContent className={classes.largeCardContent}>
-                    <DateRangeIcon className={classes.icon}/>
-                    <Typography className={classes.titlePos} color="textSecondary">
-                        Wybór przedziału czasu
-                    </Typography>
+                    <Container className={classes.titleContainer}>
+                        <DateRangeIcon className={classes.icon} />
+                        <Typography className={classes.titlePos} color="textSecondary">
+                            Wybór przedziału czasu
+                        </Typography>
+                    </Container>
                     {firstDateWarning && <Typography className={classes.warningDate}>
                         Wskazana data początkowa pozostaje w konflikcie z końcową
                     </Typography>}
@@ -132,7 +139,7 @@ export default function DatePicker(props) {
                         Wskazana data końcowa pozostaje w konflikcie z początkową
                     </Typography>}
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <div style={{textAlign: 'center'}} className={classes.dateContent}>
+                        <div style={{ textAlign: 'center' }} className={classes.dateContent}>
                             <KeyboardDatePicker
                                 disableToolbar
                                 variant="inline"
@@ -144,7 +151,7 @@ export default function DatePicker(props) {
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
                                 }}
-                                style={{padding: "15px"}}
+                                style={{ padding: "15px" }}
                                 autoOk={true}
                             />
                             <KeyboardDatePicker
@@ -158,13 +165,13 @@ export default function DatePicker(props) {
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
                                 }}
-                                style={{padding: "15px"}}
+                                style={{ padding: "15px" }}
                                 autoOk={true}
                             />
                             <Typography id="range-slider" gutterBottom>
                                 Zakres dat:
                             </Typography>
-                            <Box style={{padding: '0px 17px'}}>
+                            <Box style={{ padding: '0px 17px' }}>
                                 <Slider
                                     className={classes.slider}
                                     min={start_date_utc}
@@ -177,8 +184,8 @@ export default function DatePicker(props) {
                                     //valueLabelDisplay="auto"
                                     aria-labelledby="range-slider"
                                     onChangeCommitted={(e, v) => sliderChangeCommitted(v)}
-                                    step={12*60*60*1000} //co 12h
-                                    //marks
+                                    step={12 * 60 * 60 * 1000} //co 12h
+                                //marks
                                 />
                             </Box>
                         </div>
