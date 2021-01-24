@@ -18,6 +18,8 @@ processTweetsFunctionAppName = "processTweetsFA-PW"
 backendAppServicePlanName = "backendASP-PW"
 backendAppServiceName     = "backendAS-PW"
 
+databricksName = "databricksPW"
+
 hashtags = [
   "#kwarantanna", 
   "#vege", 

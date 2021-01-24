@@ -228,6 +228,16 @@ resource "azurerm_app_service" "backendAppService" {
   }
 }
 
+#############################################
+################ Databricks #################
+#############################################
+
+resource "azurerm_databricks_workspace" "databricks" {
+  name                = var.databricksName
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  sku                 = "standard"
+}
 
 ######################################################################
 # Outputs

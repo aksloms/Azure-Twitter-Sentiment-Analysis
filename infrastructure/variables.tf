@@ -101,3 +101,9 @@ variable "backendAppServicePlanName" {
 variable "backendAppServiceName" {
   type = string
 }
+
+# Databricks
+
+variable "databricksName" {
+  type = string
+}
