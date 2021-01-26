@@ -6,10 +6,12 @@ import Navbar from './components/Navbar'
 import SentimentPlot from './components/SentimentPlot'
 import AspectPlot from './components/AspectPlot'
 
+//Endpoint na liczbę hashtagów dla danego hashtagiem
+
 //TODOS
 
-//usuwanie autocomplete poprzez X w tekście
 //Ogarnięcie małych card z ciekawymi informacjami (trend??)
+//Refaktoryzacja
 
 //Skalowanie homepage do aplikacji mobilnej
 

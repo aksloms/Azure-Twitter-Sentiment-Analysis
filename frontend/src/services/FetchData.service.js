@@ -2,20 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://backendas-pw.azurewebsites.net"
 
-const getSentimentForHashtag = (hashtag, startDate, endDate, bins) => {
-    const endpoint = "/binned-sentiment?"
-    // const qHashtag = "hashtag=%23" + hashtag + "&";
-    // const qStartDate = "start_date=" + startDate + "&";
-    // const qEndDate = "end_date=" + endDate + "&";
-    // const qBins = "bins=" + bins;
-    const params = {
-        hashtag: '#'+hashtag,
-        start_date: startDate,
-        end_date: endDate,
-        bins: bins
-    }
-    const url = API_URL + endpoint
-    // return axios.get(API_URL + endpoint + qHashtag + qStartDate + qEndDate + qBins,
+const makeRequest = (url, params) => {
     return axios.get(url,{
         params: params
     }).then((response) => {
@@ -32,6 +19,29 @@ const getSentimentForHashtag = (hashtag, startDate, endDate, bins) => {
         }
         return Promise.reject(error);
     });
+}
+
+const getSentimentForHashtag = (hashtag, startDate, endDate, bins) => {
+    const endpoint = "/binned-sentiment"
+    const params = {
+        hashtag: hashtag,
+        start_date: startDate,
+        end_date: endDate,
+        bins: bins
+    }
+    const url = API_URL + endpoint
+    return makeRequest(url, params);
+};
+
+const getHashtagAverage = (hashtag, startDate, endDate) => {
+    const endpoint = "/average-sentiment"
+    const params = {
+        hashtag: hashtag,
+        start_date: startDate,
+        end_date: endDate,
+    }
+    const url = API_URL + endpoint
+    return makeRequest(url, params);
 };
 
 const getHashtags = () => {
@@ -41,5 +51,6 @@ const getHashtags = () => {
 
 export default {
     getSentimentForHashtag,
+    getHashtagAverage,
     getHashtags
 };

@@ -71,7 +71,7 @@ export default function DatePicker(props) {
     const start_date = new Date('2021-01-05');
     const start_date_utc = convertToUTC(start_date);
 
-    const end_date = new Date('2021-01-30');
+    const end_date = new Date();
     const end_date_utc = convertToUTC(end_date);
 
     const [selectedFirstDate, setSelectedFirstDate] = React.useState(start_date);
