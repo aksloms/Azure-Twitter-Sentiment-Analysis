@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Grid from "@material-ui/core/Grid";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'date-fns';
@@ -13,6 +10,7 @@ import PlotItem from './PlotItem'
 import AnalysisSpecifier from './AnalysisSpecifier'
 import DatePicker from "./DatePicker";
 import FetchData from "../services/FetchData.service"
+import SmallGridItem from './SmallGridItem'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,43 +23,8 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "auto",
         marginRight: "auto",
     },
-    gridItem: {
-        padding: "15px"
-    },
-    card: {
-        minWidth: 300,
-        minHeight: 280
-    },
     title: {
         fontSize: 14,
-    },
-    smallGridContainer: {
-        padding: 0,
-        height: 50,
-        display: 'flex',
-        position: 'relative'
-    },
-    smallGridTitle: {
-        marginBottom: 8,
-        textAlign: "left",
-    },
-    hashtagName: {
-        marginBottom: 4,
-        position: "absolute",
-        top: 6,
-        left: 0
-    },
-    hashtagSentimentGreen: {
-        marginBottom: 4,
-        position: "absolute",
-        right: 0,
-        color: "#00ff00"
-    },
-    hashtagSentiment: {
-        marginBottom: 4,
-        position: "absolute",
-        right: 0,
-        color: "red"
     },
     icon: {
         fontSize: 40,
@@ -121,11 +84,11 @@ export default function SentimentPlot() {
 
     const fetchHashtagPlot = () => {
         var fetchedData = [];
-        var validHashtags = [...new Set(hashtags.filter(Boolean))]; //usuniecie nulli i duplikatów
+        var validHashtags = [...new Set(hashtags.filter(Boolean))];
         validHashtags.forEach((value) => {
             FetchData.getSentimentForHashtag(
                 value,
-                date[0].toISOString().split(".")[0],//usuwa milisekundy z daty
+                date[0].toISOString().split(".")[0],
                 date[1].toISOString().split(".")[0],
                 100
             ).then((response) => {
@@ -156,45 +119,7 @@ export default function SentimentPlot() {
         });
     }, []);
 
-    const SmallGridItem = (props) => {
-        return (
-            <Grid item className={classes.gridItem}>
-                <Card className={classes.card}>
-                    <CardContent style={{ padding: "15px" }}>
-                        {props.icon}
-                        <Typography className={classes.smallGridTitle} color="textSecondary">
-                            {props.title}
-                        </Typography>
-                        {props.numOfTweets &&
-                            <Typography variant="h3" component="p" >
-                                {props.numOfTweets}
-                            </Typography>
-                        }
-                        {props.hashtagArray && props.hashtagArray.map((value, index) => {
-                            return (
-                                <Container className={classes.smallGridContainer} key={index}>
-                                    <Typography variant="h5" component="p" className={classes.hashtagName}>
-                                        {value[0]}
-                                    </Typography>
-                                    {value[1] >= 0.5 &&
-                                        <Typography variant="h4" component="p" className={classes.hashtagSentimentGreen}>
-                                            {value[1]}
-                                        </Typography>
-                                    }
-                                    {value[1] < 0.5 &&
-                                        <Typography variant="h4" component="p" className={classes.hashtagSentimentRed}>
-                                            {value[1]}
-                                        </Typography>
-                                    }
-                                </Container>
-                            )
-                        })}
-                    </CardContent>
-                </Card>
-            </Grid>
-        );
-    }
-
+    
     return (
         <div>
             <Grid container className={classes.grid}>

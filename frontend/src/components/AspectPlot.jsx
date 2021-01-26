@@ -1,9 +1,6 @@
 import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Grid from "@material-ui/core/Grid";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import 'date-fns';
@@ -11,6 +8,7 @@ import DatePicker from "./DatePicker";
 
 import PlotItem from './PlotItem'
 import AnalysisSpecifier from './AnalysisSpecifier'
+import SmallGridItem from './SmallGridItem'
 
 
 
@@ -32,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         minWidth: 300,
+        minHeight: 280
     },
     plotCardContent: {
         padding: "0px",
@@ -45,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     },
     icon: {
         fontSize: 40,
-        position: "absolute"
+        display: 'block',
     },
     button: {
         width: "100%",
@@ -94,8 +93,8 @@ const trace3 = {
     type: 'scatter'
 };
 
-const numOfTweets = 1500;
-const interestingNumbers = 1234;
+const numOfTweets = 200;
+const averageSentimentForAspect = [["Nazwa aspektu", 0.499]];
 
 const data = [trace1, trace2, trace3];
 
@@ -107,34 +106,15 @@ export default function AspectPlot() {
     );
     const [aspects, setAspects] = React.useState([])
 
-
-    const SmallGridItem = (props) => {
-        return (
-            <Grid item className={classes.gridItem}>
-                <Card className={classes.card}>
-                    <CardContent>
-                        {/*<TrendingUpIcon className={classes.icon}/>*/}
-                        {props.icon}
-                        <Typography className={classes.pos} color="textSecondary">
-                            {props.title}
-                        </Typography>
-                        <Typography variant="h3" component="p" className={classes.pos}>
-                            {props.text}
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid>
-        );
-    }
     const aspectArr = aspectDict[aspectHashtag]
 
     return (
         <div>
             <Grid container className={classes.grid}>
                 <SmallGridItem icon={<TrendingUpIcon className={classes.icon} />} title={"Przeanalizowane tweety"}
-                    text={numOfTweets} />
-                <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Inne ciekawe liczby"}
-                    text={interestingNumbers} />
+                    numOfTweets={numOfTweets} />
+                <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Średni sentyment dla aspektów:"}
+                    hashtagArray={averageSentimentForAspect} />
                 <DatePicker />
                 <PlotItem 
                     layout={defaultLayout} 
