@@ -17,12 +17,11 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 300,
     },
     plotCardContent: {
-        padding: "0px",
+        padding: "16px 0px",
     },
     icon: {
         fontSize: 40,
-        display: 'block',
-        padding: "15px"
+        display: 'block'
     },
     pos: {
         margin: 15,

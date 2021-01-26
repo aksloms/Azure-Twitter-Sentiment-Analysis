@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import CardContent from "@material-ui/core/CardContent";
 import DeleteIcon from '@material-ui/icons/Delete';
 import ForwardTwoToneIcon from '@material-ui/icons/ForwardTwoTone';
-import { Container, IconButton } from '@material-ui/core';
+import {Container, IconButton} from '@material-ui/core';
 import ListIcon from '@material-ui/icons/List';
 import Typography from "@material-ui/core/Typography";
 
@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
     },
     icon: {
         fontSize: 40,
-        position: "relative",
+        //position: "absolute",
+        display: 'block'
     },
     titlePos: {
         margin: 15,
@@ -44,8 +45,14 @@ const useStyles = makeStyles((theme) => ({
     },
     titleContainer: {
         display: "flex"
+    },
+    aspectButton: {
+        marginTop: "auto",
+        marginBottom: "auto",
+        height: "40px"
     }
 }));
+
 
 export default function AnalysisSpecifier(props) {
     var componentTypeElements = {}
@@ -85,21 +92,25 @@ export default function AnalysisSpecifier(props) {
                     className={classes.autocomplete}
                     options={options}
                     getOptionLabel={(option) => option}
-                    renderInput={(params) => <TextField {...params} label={componentTypeElements.name} variant="outlined" />}
+                    renderInput={(params) => <TextField {...params} label={componentTypeElements.name}
+                                                        variant="outlined"/>}
                     onChange={(event, value) => {
                         handleComboBoxChange(event, value, key)
                     }}
                     value={value}
                 />
+                {props.type === 'sentiment' && <Button
+                    className={classes.aspectButton}
+                    variant="contained"
+                    endIcon={<ForwardTwoToneIcon/>}
+                    onClick={() => {sessionStorage.setItem('chosenAspectHashtag', autocompleteChosenValues[key])}}
+                    href="/plot/aspect"> Aspekt
+                </Button>}
 
-                {props.type === 'sentiment' && <IconButton
-                    onClick={() => { sessionStorage.setItem('chosenAspectHashtag', autocompleteChosenValues[key]) }}
-                    href="/plot/aspect">
-                    <ForwardTwoToneIcon className={classes.icon} />
-                </IconButton>}
-
-                {(key !== 0) && (<IconButton onClick={() => { removeOptionPicker(key) }}>
-                    <DeleteIcon className={classes.icon} />
+                {(key !== 0) && (<IconButton onClick={() => {
+                    removeOptionPicker(key)
+                }}>
+                    <DeleteIcon className={classes.icon}/>
                 </IconButton>)}
             </Container>
         );
@@ -137,11 +148,14 @@ export default function AnalysisSpecifier(props) {
             <Card className={classes.card}>
                 <CardContent>
                     <Container className={classes.titleContainer}>
-                        <ListIcon className={classes.icon} />
+                        <ListIcon className={classes.icon}/>
                         <Typography className={classes.titlePos} color="textSecondary">
                             {componentTypeElements.title}
                         </Typography>
                     </Container>
+                    {props.type === 'aspect' && <Typography variant="h5" component="h2" style={{"padding": "10px 24px"}}>
+                        Aspekty dla: {props.chosenHashtag}
+                    </Typography>}
                     {autocompleteOptionsList.map((item, key) => {
                         var value = autocompleteChosenValues[key]
                         if (value === undefined)
@@ -151,7 +165,8 @@ export default function AnalysisSpecifier(props) {
                     <Button className={classes.button} variant="contained" color="primary" onClick={addHashtagPicker}>
                         {componentTypeElements.buttonAddText}
                     </Button>
-                    {props.type === 'aspect' && <Button className={classes.button} variant="contained" color="secondary" href={componentTypeElements.href}>
+                    {props.type === 'aspect' && <Button className={classes.button} variant="contained" color="secondary"
+                                                        href={componentTypeElements.href}>
                         {componentTypeElements.buttonLinkText}
                     </Button>}
                 </CardContent>

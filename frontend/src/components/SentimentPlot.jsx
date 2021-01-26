@@ -16,8 +16,6 @@ import SmallGridItem from './SmallGridItem'
 const useStyles = makeStyles((theme) => ({
     grid: {
         margin: "15px",
-        //width: "unset",
-        //justifyContent: "center",
         maxWidth: "1320px",
         flexWrap: 'wrap',
         marginLeft: "auto",
@@ -35,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
 const defaultLayout = {
     width: 630,
     height: 440,
-    //title: "A plot for hashtags: ",
     yaxis: { range: [0, 1] },
     legend: {
         x: 0,
@@ -53,22 +50,22 @@ export default function SentimentPlot() {
     const classes = useStyles();
     const [availableHashtags, setAvailableHashtags] = React.useState();
     const [hashtags, setHashtags] = React.useState(
-        JSON.parse(sessionStorage.getItem('pickedHashtags')) || ["#COVID19"]
+        JSON.parse(sessionStorage.getItem('pickedHashtags')) || []
     );
     const [plotData, setPlotData] = React.useState([]);
     const [date, setDate] = React.useState([new Date('2021-01-05'), new Date()]);
 
     const [averageSentimentForHashtag, setAverageSentimentForHashtag] = React.useState([]);
-    const [numOfHashtags, setNumOfHashtags] = React.useState(0);
+    const [numOfHashtags, setNumOfHashtags] = React.useState();
 
     const fetchHashtagInfo = () => {
         var averagesForHashtags = [];
         var hashCount = 0
-        var validHashtags = [...new Set(hashtags.filter(Boolean))]; //usuniecie nulli i duplikatów
+        var validHashtags = [...new Set(hashtags.filter(Boolean))];
         validHashtags.forEach((value) => {
             FetchData.getHashtagAverage(
                 value,
-                date[0].toISOString().split(".")[0],//usuwa milisekundy z daty
+                date[0].toISOString().split(".")[0],
                 date[1].toISOString().split(".")[0]
             ).then((response) => {
                 if (response && response.data) {
@@ -112,13 +109,11 @@ export default function SentimentPlot() {
         fetchHashtagInfo()
     }, [hashtags, date]);
 
-
     useEffect(() => {
         FetchData.getHashtags().then((response) => {
             setAvailableHashtags(response.data.hashtags);
         });
     }, []);
-
     
     return (
         <div>

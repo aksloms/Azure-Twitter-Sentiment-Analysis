@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Grid from "@material-ui/core/Grid";
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
@@ -9,7 +9,7 @@ import DatePicker from "./DatePicker";
 import PlotItem from './PlotItem'
 import AnalysisSpecifier from './AnalysisSpecifier'
 import SmallGridItem from './SmallGridItem'
-
+import FetchData from "../services/FetchData.service"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -61,7 +61,7 @@ const aspectDict = {
 const defaultLayout = {
     width: 630,
     height: 440,
-    yaxis: { range: [0, 1] },
+    yaxis: {range: [0, 1]},
     legend: {
         x: 0,
         y: 1,
@@ -75,55 +75,77 @@ const defaultLayout = {
     }
 }
 
-const trace1 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [0.1, 0.5, 0.3, 0.7],
-    type: 'scatter'
-};
-
-const trace2 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [0.6, 0.5, 0.1, 0.9],
-    type: 'scatter'
-};
-
-const trace3 = {
-    x: ['1999-01-11', '2000-02', '2000-03', '2000-04'],
-    y: [0.7, 0.9, 0.1, 0.4],
-    type: 'scatter'
-};
-
-const numOfTweets = 200;
-const averageSentimentForAspect = [["Nazwa aspektu", 0.499]];
-
-const data = [trace1, trace2, trace3];
-
 export default function AspectPlot() {
     const classes = useStyles();
 
     const [aspectHashtag] = React.useState(
         sessionStorage.getItem('chosenAspectHashtag') || "#COVID19"
     );
-    const [aspects, setAspects] = React.useState([])
+    const [aspects, setAspects] = React.useState([]);
+    const [plotData, setPlotData] = React.useState([]);
+    const [aspectList, setAspectList] = React.useState([]);
+    const [date, setDate] = React.useState([new Date('2021-01-05'), new Date()]);
 
-    const aspectArr = aspectDict[aspectHashtag]
+    const [averageSentimentForAspect, setAverageSentimentForAspect] = React.useState([]);
+    const [numOfTweets, setNumOfTweets] = React.useState();
+
+    const getAspectList = () => {
+        FetchData.getAspectsForHashtags(aspectHashtag, date[0], date[1], 100).then((response) => {
+            setAspectList(Object.keys(response).slice(1));
+        })
+    }
+
+    const getAspects = () => {
+        var fetchedData = [];
+        var avgSentForHashtag = [];
+        var validAspects = [...new Set(aspects.filter(Boolean))];
+        FetchData.getAspectsForHashtags(aspectHashtag, date[0], date[1], 100).then((response) => {
+            if (response) {
+                validAspects.forEach((aspect) => {
+                    const arrAvg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+                    const avgAspect = [aspect, arrAvg(response[aspect])]
+                    avgSentForHashtag.push(avgAspect);
+                    const trace = {
+                        x: response["x"],
+                        y: response[aspect],
+                        type: 'scatter',
+                        showlegend: true,
+                        name: aspect,
+                    };
+                    fetchedData = [...fetchedData, trace]
+                })
+            }
+            setPlotData(fetchedData);
+            setAverageSentimentForAspect(avgSentForHashtag);
+        })
+    }
+
+    useEffect(() => {
+        getAspectList();
+    }, []);
+
+    useEffect(() => {
+        getAspects();
+    }, [aspects, date]);
 
     return (
         <div>
             <Grid container className={classes.grid}>
-                <SmallGridItem icon={<TrendingUpIcon className={classes.icon} />} title={"Przeanalizowane tweety"}
-                    numOfTweets={numOfTweets} />
-                <SmallGridItem icon={<LocalOfferIcon className={classes.icon} />} title={"Średni sentyment dla aspektów:"}
-                    hashtagArray={averageSentimentForAspect} />
-                <DatePicker />
-                <PlotItem 
-                    layout={defaultLayout} 
-                    data={data}
-                    title="Analiza sentymenty dla wybranych aspektów" />
+                <SmallGridItem icon={<TrendingUpIcon className={classes.icon}/>} title={"Przeanalizowane tweety"}
+                               numOfTweets={numOfTweets}/>
+                <SmallGridItem icon={<LocalOfferIcon className={classes.icon}/>}
+                               title={"Średni sentyment dla aspektów:"}
+                               hashtagArray={averageSentimentForAspect}/>
+                <DatePicker onDateChange={(newDate) => setDate([...newDate])}/>
+                <PlotItem
+                    layout={defaultLayout}
+                    data={plotData}
+                    title="Analiza sentymenty dla wybranych aspektów"/>
                 <AnalysisSpecifier
-                    optionsArray={aspectArr}
+                    optionsArray={aspectList}
                     type="aspect"
-                    setChosenAutocomplete={(newAspects) => setAspects([...newAspects])}/>
+                    setChosenAutocomplete={(newAspects) => setAspects([...newAspects])}
+                    chosenHashtag={aspectHashtag}/>
             </Grid>
         </div>
     );

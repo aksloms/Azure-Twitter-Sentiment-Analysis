@@ -67,13 +67,9 @@ export default function PrimarySearchAppBar(props) {
             <AppBar position="static">
                 <Toolbar>
                     <Typography className={classes.title} variant="h6" noWrap>
-                        Tag analysis
+                        Analiza sentymentu tweetów
                     </Typography>
                     <div className={classes.menuButton}>
-                        {props.isHome && <Button variant="contained" color="primary" href="/plot/sentiment" disableElevation>
-                            Analiza sentymentu
-                        </Button>}
-
                         {!props.isHome && <Button variant="contained" color="primary" href="/" disableElevation>
                             Strona główna
                         </Button>}
