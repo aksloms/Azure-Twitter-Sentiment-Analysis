@@ -12,6 +12,7 @@ Spis treści dokumentu
   - [Stos technologiczny](#stos-technologiczny)
   - [Podział ról](#podział-ról)
   - [Harmonogram](#harmonogram)
+  - [Reprodukcja rozwiązania](#reprodukcja-rozwiązania)
 
 ## Cel projektu
 
@@ -77,3 +78,19 @@ Wszystkie usługi chmurowe będą zrealizowane z użyciem platformy Azure. W us�
 | MK3    |                          Podstawowa prezentacja danych                          | 14.01.2020 |
 | KM4    |              Przypisywanie sentymentu z wykorzystaniem DataBricks               | 21.01.2020 |
 | KM5    |                      Prezentacja finalnej wersji projektu                       | 28.01.2020 |
+
+## Reprodukcja rozwiązania
+
+Cała infrastuktura rozwiązania może być utworzona automatycznie uruchamiając skrypt [Terraform](https://www.terraform.io/). W tym celu wymagane jest zainstalowanie Azure CLI oraz narzędzia Terraform.
+
+Skrypty terraform znajdują się w katalogu [infrastructure](./infrastructure).
+
+W pliku [terraform.tfvars](./infrastructure/terraform.tfvars) znajdują się nazwy zasobów. Przed uruchomieniem może być konieczna zmiana tych wartości na unikalne nazwy jeśli podane są już zajęte.
+
+W pliku [secrets.auto.tfvars](./infrastructure/secrets.auto.tfvars) wartości tymczasowe muszą być zastąpione wymaganymi danymi logowania.
+
+1. Po uzupełnieniu zmiennych Terraform należy otworzyć terminal w katalogu infrastructure oraz wykonać komendę `az login`
+2. Następnie w celu utworzenia infastruktury należy wykonać komendę `terraform apply`
+3. Następnie należy wgrać funkcje do zasobów na Azure. W tym celu należy przejść do katalogu `src/FetchTweetsAzureFunction` i uruchomić komendę `func azure functionapp publish fetchTweetsFA-PW --csharp`
+4. Podobny krok należy wykonać dla drugiej funkcji w katalogu `src/LabelTweetsAzureFunction` przy pomocy komendy `func azure functionapp publish processTweetsFA-PW --csharp`
+5. Następnie należy wgrać aplikację webową oraz model w języku python do serwisu DataBricks
