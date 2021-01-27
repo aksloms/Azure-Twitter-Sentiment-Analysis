@@ -1,5 +1,5 @@
 from azure.data.tables import TableClient
-from flask import request
+from flask import request, abort
 from flask_restful import Resource, reqparse
 from datetime import datetime, timedelta
 from config import CONNECTION_STRING, TABLE_NAME
@@ -12,7 +12,7 @@ client = TableClient.from_connection_string(
     table_name=TABLE_NAME)
 
 
-def query_tweets(hashtag, select, start_date, end_date=None, max_tweets=100):
+def query_tweets(hashtag, select, start_date, end_date=None, max_tweets=500):
     hashtag = hashtag.replace("#", "")
 
     query_filter = f"PartitionKey eq '{hashtag}' and \
@@ -36,12 +36,15 @@ def query_tweets(hashtag, select, start_date, end_date=None, max_tweets=100):
         if count == max_tweets:
             break
 
+    if len(tweets) == 0:
+        abort(404, "Cannot find any tweets for query parameters.")
+        
     return tweets
 
 
 def get_average_sentiment(hashtag, start_date, end_date=None):
     select = {"sentiment": "CognitiveServicesSentimentScore"}
-    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=20)
+    tweets = query_tweets(hashtag, select, start_date, end_date)
 
     sentiment_sum = sum(t["sentiment"] for t in tweets)
     count = len(tweets)
@@ -56,7 +59,7 @@ def get_average_sentiment(hashtag, start_date, end_date=None):
 def get_binned_sentiment(hashtag, start_date, end_date, bins):
     select = {"date": "CreatedAt",
               "sentiment": "CognitiveServicesSentimentScore"}
-    tweets = query_tweets(hashtag, select, start_date, end_date, max_tweets=50)
+    tweets = query_tweets(hashtag, select, start_date, end_date)
 
     start = tweets[0].get("date")
     end = tweets[-1].get("date")
