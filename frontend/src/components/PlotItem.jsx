@@ -3,11 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Plot from 'react-plotly.js';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import Typography from "@material-ui/core/Typography";
 import Container from '@material-ui/core/Container';
 
+const Plotly = window.Plotly;
+const Plot = createPlotlyComponent(Plotly);
 
 const useStyles = makeStyles((theme) => ({
     plotItem: {

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://backendas-pw.azurewebsites.net"
+const API_URL = "https://backendas-pw.azurewebsites.net"
 
 const makeRequest = (url, params) => {
     return axios.get(url, {
